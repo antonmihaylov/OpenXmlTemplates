@@ -4,3 +4,5 @@ obj/
 /**/.idea
 /**/.vs
 IconAssets/
+/private/
+/**/nuget.txt

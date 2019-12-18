@@ -10,6 +10,15 @@ namespace OpenXMLTemplates.ControlReplacers
 {
     public static class ControlReplacers
     {
+        public static void ReplaceAllControlReplacers(this WordprocessingDocument doc, string json)
+        {
+            VariableSource source = new VariableSource();
+            source.LoadDataFromJson(json);
+            
+            var controls = doc.ContentControls().ToList();
+            ReplaceAllControlReplacers(controls, source);
+        }
+
         public static void ReplaceAllControlReplacers(this WordprocessingDocument doc, IVariableSource variableSource)
         {
             var controls = doc.ContentControls().ToList();
