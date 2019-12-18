@@ -7,7 +7,7 @@
         <Title>Word document templating using OpenXML SDK</Title>
         <Authors>antonmmihaylov@gmail.com</Authors>
         <Description>A .NET Standard Word documents templating system that doesn't need Word installed and is both designer and developer friendly</Description>
-        <Copyright>LGPL-3.0</Copyright>
+        <Copyright></Copyright>
         <PackageProjectUrl>https://github.com/antonmihaylov/OpenXmlTemplates</PackageProjectUrl>
         <PackageLicenseUrl>https://github.com/antonmihaylov/OpenXmlTemplates/blob/master/LICENSE</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/antonmihaylov/OpenXmlTemplates</RepositoryUrl>
