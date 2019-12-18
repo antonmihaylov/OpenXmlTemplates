@@ -40,6 +40,7 @@ namespace OpenXMLTempaltesTest.ControlReplacersTests.DropdownControlReplacersTes
             Assert.AreEqual("THIS IS VALID", c2.GetTextElement().Text);
             Assert.AreEqual("THIS IS VALID", c3.GetTextElement().Text);
             doc.AssertValid();
+            doc.SaveAs(this.CurrentFolder() + "result.docx");
 
             doc.Close();
         }

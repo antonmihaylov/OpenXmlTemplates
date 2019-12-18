@@ -29,15 +29,16 @@ namespace OpenXMLTempaltesTest.ControlReplacersTests.DropdownControlReplacersTes
             SingularDropdownControlReplacer singularReplacer = new SingularDropdownControlReplacer(src);
             singularReplacer.ReplaceAll(doc);
 
-            SdtElement c1 = doc.FindContentControl("singular_prodavachi");
-            SdtElement c2 = doc.FindContentControl("singular_prodavachi2");
+            SdtElement c1 = doc.FindContentControl(singularReplacer.TagName + "_sellers");
+            SdtElement c2 = doc.FindContentControl(singularReplacer.TagName + "_buyers");
 
             Assert.NotNull(c1);
             Assert.NotNull(c2);
 
-            Assert.AreEqual("ПРОДАВАЧИТЕ", c1.GetTextElement().Text);
-            Assert.AreEqual("ПРОДАВАЧЪТ", c2.GetTextElement().Text);
+            Assert.AreEqual("sellers are", c1.GetTextElement().Text);
+            Assert.AreEqual("buyer", c2.GetTextElement().Text);
             doc.AssertValid();
+            doc.SaveAs(this.CurrentFolder() + "result.docx");
 
             doc.Close();
         }

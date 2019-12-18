@@ -51,7 +51,7 @@
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Update="ControlReplacersTests\DropdownControlReplacersTests\SingularsTest\SingularsTestDoc.docx">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="ControlReplacersTests\DropdownControlReplacersTests\SingularsTest\TemplatingsTestSingularsData.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -81,6 +81,12 @@
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Update="CustomPartAdditionTest\Doc.docx">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="ControlReplacersTests\VariableControlReplacerTests\Doc.docx">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="ControlReplacersTests\VariableControlReplacerTests\data.json">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>

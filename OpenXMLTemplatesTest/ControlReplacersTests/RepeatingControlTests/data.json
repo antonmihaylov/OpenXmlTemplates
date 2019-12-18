@@ -7,12 +7,12 @@
   ],
   "complexItems": [
     {
-      "name": "Item 1 name",
-      "address": "Item 1 address"
+      "name": "First Name",
+      "address": "First Address"
     },
     {
-      "name": "Item 2 name",
-      "address": "Item 2 address"
+      "name": "Second name",
+      "address": "Second address"
     }
   ]
 }

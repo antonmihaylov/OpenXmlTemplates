@@ -1,4 +1,4 @@
 {
-  "prodavachi": ["mariika", "penka"],
-  "prodavachi2": ["mariika"]
+  "sellers": ["John", "Peter"],
+  "buyers": ["Mario"]
 }

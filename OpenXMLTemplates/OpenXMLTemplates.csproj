@@ -6,7 +6,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="docfx.console" Version="2.48.0" />
       <PackageReference Include="DocumentFormat.OpenXml" Version="2.9.1" />
       <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     </ItemGroup>
