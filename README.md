@@ -59,7 +59,7 @@ With the library you can easily:
 
 It is server-friendly, because it doesn't require Word installed. Only the Open XML Sdk is used for manipulating the document.
 
-It is friendly to the designer of the document templates, because they don't need to know any code and they won't have to write any
+It is friendly to the designer of the document templates, because they don't need to have any coding skills and they won't have to write any
 script-like snippets in the word document. Everything is instead managed by native Word content controls. 
 
 ### Built With
@@ -85,8 +85,6 @@ nuget install OpenXMLTemplates
 ```
 git clone https://github.com/antonmihaylov/OpenXmlTemplates.git
 ```
-
-
 
 <!-- USAGE EXAMPLES -->
 ## Usage
