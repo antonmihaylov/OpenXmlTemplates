@@ -1,0 +1,15 @@
+{
+  "item1": "NewItem1Value",
+  "item2": "NewItem2Value",
+  "items": [
+    {
+      "value": "ListItem1FromJSON"
+    },
+    {
+      "value": "ListItem2FromJSON"
+    },
+    {
+      "value": "ListItem3FromJSON"
+    }
+  ]
+}

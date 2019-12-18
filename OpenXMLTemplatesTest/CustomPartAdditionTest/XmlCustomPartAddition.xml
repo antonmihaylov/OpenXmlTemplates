@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root xmlns="XmlCustomPart">
+    <additionalItem1>Meow</additionalItem1>
+    <items>Item1</items>
+    <items>Item2</items>
+</root>

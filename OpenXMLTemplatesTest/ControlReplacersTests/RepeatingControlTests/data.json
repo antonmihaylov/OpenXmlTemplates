@@ -1,0 +1,18 @@
+{
+  "items": [
+    "Item 1",
+    "Item 2",
+    "Item 3",
+    "Item 4"
+  ],
+  "complexItems": [
+    {
+      "name": "Item 1 name",
+      "address": "Item 1 address"
+    },
+    {
+      "name": "Item 2 name",
+      "address": "Item 2 address"
+    }
+  ]
+}

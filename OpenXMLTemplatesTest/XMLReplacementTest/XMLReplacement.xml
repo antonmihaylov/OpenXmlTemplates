@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root xmlns="XMLReplacementTest">
+    <item1>NewItem1Value</item1>
+    <item2>NewItem2Value</item2>
+    <items>
+        <value>ListItem1FromXML</value>
+    </items>
+    <items>
+        <value>ListItem2FromXML</value>
+    </items>
+    <items>
+        <value>ListItem3FromXML</value>
+    </items>
+    <items>
+        <value>ListItem4FromXML</value>
+    </items>
+</root>

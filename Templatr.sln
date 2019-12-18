@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29424.173
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenXMLTemplates", "OpenXMLTemplates\OpenXMLTemplates.csproj", "{27CCC3D4-7B2A-4F22-A848-527725E8CDCD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenXMLTemplatesTest", "OpenXMLTemplatesTest\OpenXMLTemplatesTest.csproj", "{AA16EBBC-5D53-4E9A-8057-2748FCB5DC6B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{27CCC3D4-7B2A-4F22-A848-527725E8CDCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27CCC3D4-7B2A-4F22-A848-527725E8CDCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27CCC3D4-7B2A-4F22-A848-527725E8CDCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27CCC3D4-7B2A-4F22-A848-527725E8CDCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA16EBBC-5D53-4E9A-8057-2748FCB5DC6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA16EBBC-5D53-4E9A-8057-2748FCB5DC6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA16EBBC-5D53-4E9A-8057-2748FCB5DC6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA16EBBC-5D53-4E9A-8057-2748FCB5DC6B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {71D86D6D-CB11-48CE-B847-D63D214BFB05}
+	EndGlobalSection
+EndGlobal
