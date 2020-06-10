@@ -133,22 +133,39 @@ namespace OpenXMLTemplates.ControlReplacers
         }
         
         
+	    /// <summary>
+		/// Sets the text of the OpenXmlElement and removes the default placeholder style that is associated by default with content controls
+		/// </summary>
+		protected static void SetTextAndRemovePlaceholderFormat(OpenXmlElement element, string newValue) {
+			if (newValue == null)
+				return;
 
-        /// <summary>
-        /// Sets the text of the OpenXmlElement and removes the default placeholder style that is associated by default with content controls
-        /// </summary>
-        protected static void SetTextAndRemovePlaceholderFormat(OpenXmlElement element, string newValue)
-        {
-            if (newValue == null)
-                return;
+			string[] newlineArray = { Environment.NewLine, "\n", "\r\n", "\n\r" };
+			string[] textArray = newValue.Split(newlineArray, StringSplitOptions.None);
+			bool first = true;
 
-            Text textElement = element.SetText(newValue);
+			var textElement = element.GetTextElement();
+			var textElementParent = textElement.Parent;
 
-            //Check if the style is the default placeholder style and remove it if it is
-            if (textElement?.Parent is Run run && run.RunProperties?.RunStyle?.Val == "PlaceholderText")
-                run.RunProperties.RunStyle.Val = "";
-        }
+			foreach (var line in textArray) {
 
+				if (!first) {
+					textElementParent.Append(new Break());
+				}
+
+				textElement.Parent.Append(new Text(line));
+
+				first = false;
+			}
+
+			//Check if the style is the default placeholder style and remove it if it is
+			if (textElement?.Parent is Run run && run.RunProperties?.RunStyle?.Val == "PlaceholderText") {
+				run.RunProperties.RunStyle.Val = "";
+			}
+
+			textElement.Remove();
+
+		}
 
     }
 }
