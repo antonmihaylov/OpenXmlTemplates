@@ -20,6 +20,8 @@ namespace OpenXMLTemplates.ControlReplacers
             {
                 object variable = variableSource.GetVariable(variableIdentifier);
 
+                if (variable == null) return "";
+                
                 if (contentControl.GetContentControlType() == OpenXmlExtensions.ContentControlType.RichText &&
                     variable is Dictionary<string, object> innerData)
                 {

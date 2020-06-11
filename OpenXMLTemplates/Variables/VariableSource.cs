@@ -68,6 +68,7 @@ namespace OpenXMLTemplates.Variables
         /// If no data is loaded null is returned.
         /// </summary>
         /// <param name="variabeIdentifier">The variable identifier</param>
+        /// <param name="allowNull">If this is false and the value is null an IncorrectIdentifierException exception is thrown</param>
         /// <returns>The found variable value or null if there is no data loaded or the variable is not found (in case throwIfNotFound is false)</returns>
         /// <exception cref="IncorrectVariableTypeException"></exception>
         public virtual object GetVariable(string variabeIdentifier)
@@ -86,11 +87,6 @@ namespace OpenXMLTemplates.Variables
                 if (ParseVariableIdentifier(variabeIdentifier, id,
                     ref lastList, ref lastNestedStructure, ref lastValue, out object variableFromDictionary))
                     return variableFromDictionary;
-            }
-
-            if (lastValue == null)
-            {
-                throw new IncorrectIdentifierException(variabeIdentifier);
             }
 
             return lastValue;
