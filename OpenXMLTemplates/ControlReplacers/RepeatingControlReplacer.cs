@@ -134,9 +134,10 @@ namespace OpenXMLTemplates.ControlReplacers
             return null;
         }
 
-        private static OpenXmlElement GetSdtContent(SdtElement original)
+         private static OpenXmlElement GetSdtContent(SdtElement original)
         {
-            return original.GetFirstChild<SdtContentBlock>() ??
+            return original.GetFirstChild<SdtContentRow>() ?? 
+                   original.GetFirstChild<SdtContentBlock>() ??
                    (OpenXmlElement) original.GetFirstChild<SdtContentRun>();
         }
 
