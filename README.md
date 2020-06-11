@@ -36,11 +36,11 @@
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
 * [Usage](#usage)
+* [Supported tags](#supported-tags)
 * [Roadmap](#roadmap)
 * [Contributing](#contributing)
 * [License](#license)
 * [Contact](#contact)
-* [Acknowledgements](#acknowledgements)
 
 
 
@@ -74,13 +74,13 @@ script-like snippets in the word document. Everything is instead managed by nati
 
 To get a local copy up and running use one of the following methods:
 
-### Nuget
+ Install via nuget:
 
 ```
 nuget install OpenXMLTemplates
 ```
 
-### Clone the repo
+ or clone the repo
  
 ```
 git clone https://github.com/antonmihaylov/OpenXmlTemplates.git
@@ -88,10 +88,87 @@ git clone https://github.com/antonmihaylov/OpenXmlTemplates.git
 
 <!-- USAGE EXAMPLES -->
 ## Usage
-TODO
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+
+1. Open your document in Word
+2. Open the *Developer* tab in the ribbon 
+  (if you don't have it - open *File* tab, go to *Options* > *Customize Ribbon*.
+  Under *Customize the Ribbon* and under *Main Tabs*, select the *Developer* check box.)
+3. Under the *Controls* tab - add a new *Content Control* of your liking (*Plain text* is the simplest one - just text with formatting)
+4. Select the newly added *Content control* and click *Properties* in the *Developer* ribbon
+5. Change the *Tag* in the popup window to match one of the [supported tags](#supported-tags) (the tag name is case-insensitive - variable is the same as VARIABLE)
+6. Open the .docx file using WordFileUtils.OpenFile(path_to_file)
+7. Call ReplaceAllControlReplacers on the document object with parameter - the json data you want to provide
+8. Save the document using the SaveAs method
+
+
+## Supported Tags
+
+Note that if your variable names contain an underscore results may be unpredictable!
+
+### Variable
+
+* Tag name: "variable_\<ENTER THE NAME OF YOUR VARIABLE\>" (the *variable* keyword is case-insensitive)
+* Replaces the text inside the control with the value of the variable with the provided name
+* Supports nested variable names (e.g. address.street)
+* Supports array access (e.g. names[0])
+* Supports nested content controls using a *Rich text box* - the nested variable name is relative to the parent
+  
+  Example:
+  
+ ![](https://github.com/antonmihaylov/OpenXmlTemplates/blob/master/ReadmeImages/example_variable.png)
+ 
+ ### Repeating
+
+* Tag name: "repeating_\<ENTER THE NAME OF YOUR VARIABLE\>"  (the *repeating* keyword is case-insensitive)
+* Repeats the content control as many times as there are items in the variable identified by the provided variable name.
+* Complex fields with inner content controls are supported. Таг the inner fields with a tag as: "repeatingitem_\<VARIABLE NAME\>". Here the variable name is relative to the list item
+* You can add extra arguments to the tag name (e.g. "repeating_\<VARIABLE NAME\>_extraparam1_extraparam2..."):
+  * "inline" -  doesn't insert a new line after each item (e.g. "repeating_\<VARIABLE NAME\>_inline")
+  * "separator_\<INSERT SEPARATOR STRING\>"- inserts a separator after each item (e.g. "repeating_\<VARIABLE NAME\>_separator_, " - this inserts a comma between each item)
+  * "lastSeparator_\<INSERT SEPARATOR STRING\>"- inserts a special sepeartor before the last item (e.g. "repeating_\<VARIABLE NAME\>_separator_, _lastSeparator_and " - this inserts a comma between each item and an "and" before the last item)
+
+  Example:
+  
+ ![](https://github.com/antonmihaylov/OpenXmlTemplates/blob/master/ReadmeImages/example_repeating.png)
+
+
+### Conditional remove
+
+* Tag name: "conditionalRemove_\<ENTER THE NAME OF YOUR VARIABLE\>"  (the *conditionalRemove* keyword is case-insensitive)
+* Removes content controls based on the value of the provided variable
+* Complex fields with inner content controls are supported. Таг the inner fields with a tag as: "repeatingitem_\<VARIABLE NAME\>". Here the variable name is relative to the list item
+* If the variable value is evaluated to true (True, "true", 1, "1", non-empty list, non-empty dict) the control stays. If it doesn't - it is removed
+* You can add extra arguments to the tag name (e.g. "conditionalRemove_\<VARIABLE NAME\>_extraparam1_extraparam2..."):
+  * "OR" - applies an OR operation to the values. The control is removed if none of the values between the operator are true. (e.g. "conditionalRemove_\<VARIABLE NAME 1\>_or_\<VARIABLE NAME 2\>")
+  * "EQ", "GT" and "LT" - checks if the value of the first variable equals ("eq"), is greather than ("gt") or is less than ("lt") the second variable's value. (e.g. "conditionalRemove_\<VARIABLE NAME 1\>_lt_\<VARIABLE NAME 2\>"). You can also provide a value to the operation, instead of a variable name (e.g. "conditionalRemove_\<VARIABLE NAME\>_lt_2). The control is removed if the supplied condition evaluates to false.
+  * "NOT" - reverses the last value. (e.g. "conditionalRemove_\<VARIABLE NAME\>_not)
+* You can also chain multiple arguments, e.g.  "conditionalRemove_\<VARIABLE NAME 1\>_not_or__\<VARIABLE NAME 2\>_and_\<VARIABLE NAME 3\>". Note that the expression is evaluated from left to right, with no recognition for the order of operations.
+
+  Example:
+  
+ ![](https://github.com/antonmihaylov/OpenXmlTemplates/blob/master/ReadmeImages/example_conditionalRemove.png)
+
+
+### Singular dropdown
+
+* Works only with Dropdown content control!
+* Tag name: "singular_\<ENTER THE NAME OF YOUR LIST VARIABLE\>"  (the *singular* keyword is case-insensitive)
+* Replaces the text inside a content control with the appropriate value based on the length of the list variable with the provided name
+* If the list variable has a length of 1 (or 0) the first value from the dropdown is used. If it's more than one - the second value from the dropdown is used.
+
+  Example:
+  
+ ![](https://github.com/antonmihaylov/OpenXmlTemplates/blob/master/ReadmeImages/example_singular.png)
+ 
+ 
+### Conditional dropdown
+
+* Works only with Dropdown content control!
+* Tag name: "conditional_\<ENTER THE NAME OF YOUR LIST VARIABLE\>"  (the *conditional* keyword is case-insensitive)
+* Replaces the text inside a content control with the appropriate value based on the length of the variable with the provided name
+* If it's evaluated to true (aka is true, "true", 1, "1", non-empty list, non-empty dict) - the first value from the dropdown is used. If it's not - the second value is used.
+* You can use the same extra arguments as in the Conditional remove replacer 
 
 
 
@@ -118,27 +195,16 @@ Contributions are what make the open source community such an amazing place to b
 <!-- LICENSE -->
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the LGPLv3 License. See `LICENSE` for more information.
 
 
 
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email
+Anton Mihaylov - antonmmihaylov@gmail.com
 
-Project Link: [https://github.com/github_username/repo](https://github.com/github_username/repo)
-
-
-
-<!-- ACKNOWLEDGEMENTS -->
-## Acknowledgements
-
-* []()
-* []()
-* []()
-
-
+Project Link: [https://github.com/antonmihaylov/OpenXmlTemplates](https://github.com/antonmihaylov/OpenXmlTemplates)
 
 
 
@@ -156,4 +222,3 @@ Project Link: [https://github.com/github_username/repo](https://github.com/githu
 [license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/othneildrew
-[product-screenshot]: images/screenshot.png
