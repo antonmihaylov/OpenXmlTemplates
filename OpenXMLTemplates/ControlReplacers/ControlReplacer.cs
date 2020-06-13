@@ -145,6 +145,11 @@ namespace OpenXMLTemplates.ControlReplacers
 			var textArray = newValue.Split(newlineArray, StringSplitOptions.None);
 
 			var textElement = element.GetTextElement();
+			if (textElement == null)
+			{
+				 textElement = new Text();
+				 element.Append(new Paragraph(new Run(textElement)));
+			}
 			var textElementParent = textElement.Parent;
 			
 			var first = true;
