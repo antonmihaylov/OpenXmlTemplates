@@ -5,5 +5,6 @@
   "address": {
     "street": "Elm street",
     "number": 23
-  }
+  },
+  "paragraph": "This is a paragraph. \\n This should be a new line \\n\\r This is another new line"
 }

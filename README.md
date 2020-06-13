@@ -101,6 +101,7 @@ git clone https://github.com/antonmihaylov/OpenXmlTemplates.git
 7. Call ReplaceAllControlReplacers on the document object with parameter - the json data you want to provide
 8. Save the document using the SaveAs method
 
+Note: to insert a new line, add a new line character (\r\n, \n\r, \n) in the data.
 
 ## Supported Tags
 

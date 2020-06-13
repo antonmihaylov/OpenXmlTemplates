@@ -1,6 +1,7 @@
 using System.IO;
 using System.Linq;
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 using NUnit.Framework;
 using OpenXMLTemplates;
 using OpenXMLTemplates.ControlReplacers;
@@ -15,23 +16,30 @@ namespace OpenXMLTempaltesTest.ControlReplacersTests.VariableControlReplacerTest
         private string GetData => File.ReadAllText(this.CurrentFolder() + "data.json");
 
         [Test]
-        public void TestRepeatingControls()
+        public void TestVariableControls()
         {
-            using WordprocessingDocument doc = GetDoc;
-            string data = GetData;
+            using var doc = GetDoc;
+            var data = GetData;
 
-            VariableSource src = new VariableSource();
+            var src = new VariableSource();
             src.LoadDataFromJson(data);
 
-            VariableControlReplacer replacer = new VariableControlReplacer(src);
+            var replacer = new VariableControlReplacer(src);
 
             replacer.ReplaceAll(doc);
             doc.SaveAs(this.CurrentFolder() + "result.docx");
 
-            Assert.AreEqual("Antonio Conte", doc.FindContentControl(replacer.TagName + "_" + "name").GetTextElement().Text);
-            Assert.AreEqual("Elm street", doc.FindContentControl(replacer.TagName + "_" + "address.street").GetTextElement().Text);
-            Assert.AreEqual("23", doc.FindContentControl(replacer.TagName + "_" + "address.number").GetTextElement().Text);
-            
+            Assert.AreEqual("Antonio Conte",
+                doc.FindContentControl(replacer.TagName + "_" + "name").GetTextElement().Text);
+            Assert.AreEqual("Elm street",
+                doc.FindContentControl(replacer.TagName + "_" + "address.street").GetTextElement().Text);
+            Assert.AreEqual("23",
+                doc.FindContentControl(replacer.TagName + "_" + "address.number").GetTextElement().Text);
+
+            var cc = doc.FindContentControl(replacer.TagName + "_" + "paragraph");
+            Assert.AreEqual(2,
+                cc.Descendants<Break>().Count());
+
             doc.AssertValid();
         }
     }

@@ -28,14 +28,14 @@ namespace OpenXMLTemplates.ControlReplacers
         /// <summary>
         /// The allowed content control type for this replacer
         /// </summary>
-        protected readonly OpenXmlExtensions.ContentControlType contentControlTypeRestriction;
+        protected readonly OpenXmlExtensions.ContentControlType ContentControlTypeRestriction;
 
 
         
         protected ControlReplacer(IVariableSource variableSource, OpenXmlExtensions.ContentControlType contentControlTypeRestriction = OpenXmlExtensions.ContentControlType.Undefined)
         {
             this.VariableSource = variableSource;
-            this.contentControlTypeRestriction = contentControlTypeRestriction;
+            this.ContentControlTypeRestriction = contentControlTypeRestriction;
         }
 
 
@@ -78,8 +78,8 @@ namespace OpenXMLTemplates.ControlReplacers
             string tag = sdtElement.GetContentControlTag();
 
             //Check if it's the correct type of content control
-            if (type != this.contentControlTypeRestriction &&
-                contentControlTypeRestriction != OpenXmlExtensions.ContentControlType.Undefined) return;
+            if (type != this.ContentControlTypeRestriction &&
+                ContentControlTypeRestriction != OpenXmlExtensions.ContentControlType.Undefined) return;
 
             //Check if this is a valid tag and if it matches the defined tag name for this control replacer
             if (!ValidateAndExtractTag(tag, out string varIdentifier, out var otherParameters)) return;
@@ -134,18 +134,20 @@ namespace OpenXMLTemplates.ControlReplacers
         
         
 	    /// <summary>
-		/// Sets the text of the OpenXmlElement and removes the default placeholder style that is associated by default with content controls
+		/// Sets the text of the OpenXmlElement and removes the default placeholder style that is associated by default with content controls.
+		/// If there are new lines (\n, \r\n, \n\r) in the text, it will insert a Break between them
 		/// </summary>
 		protected static void SetTextAndRemovePlaceholderFormat(OpenXmlElement element, string newValue) {
 			if (newValue == null)
 				return;
 
-			string[] newlineArray = { Environment.NewLine, "\n", "\r\n", "\n\r" };
-			string[] textArray = newValue.Split(newlineArray, StringSplitOptions.None);
-			bool first = true;
+			string[] newlineArray = { Environment.NewLine, "\\r\\n", "\\n\\r", "\\n" };
+			var textArray = newValue.Split(newlineArray, StringSplitOptions.None);
 
 			var textElement = element.GetTextElement();
 			var textElementParent = textElement.Parent;
+			
+			var first = true;
 
 			foreach (var line in textArray) {
 
