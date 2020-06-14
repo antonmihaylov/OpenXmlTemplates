@@ -16,7 +16,7 @@ namespace OpenXMLTemplates.Utils
          */
         public static string GetXmlNamespace(this XNode xmlData)
         {
-            XmlReader reader = xmlData.CreateReader();
+            var reader = xmlData.CreateReader();
             reader.MoveToContent();
             return reader.NamespaceURI;
         }
@@ -26,9 +26,9 @@ namespace OpenXMLTemplates.Utils
          */
         public static XElement SerializeToXElement<T>(object obj)
         {
-            using MemoryStream memoryStream = new MemoryStream();
+            using var memoryStream = new MemoryStream();
             using TextWriter streamWriter = new StreamWriter(memoryStream);
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+            var xmlSerializer = new XmlSerializer(typeof(T));
             xmlSerializer.Serialize(streamWriter, obj);
             return XElement.Parse(Encoding.ASCII.GetString(memoryStream.ToArray()));
         }
@@ -38,7 +38,7 @@ namespace OpenXMLTemplates.Utils
          */
         public static T DeserializeXElement<T>(this XElement xElement)
         {
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+            var xmlSerializer = new XmlSerializer(typeof(T));
             return (T) xmlSerializer.Deserialize(xElement.CreateReader());
         }
     }

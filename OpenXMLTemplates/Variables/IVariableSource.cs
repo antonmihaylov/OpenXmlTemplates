@@ -25,5 +25,10 @@ namespace OpenXMLTemplates.Variables
         /// <returns>The found variable value or null if there is no data loaded or the variable is not found (in case throwIfNotFound is false)</returns>
         /// <exception cref="IncorrectVariableTypeException"></exception>
         object GetVariable(string variabeIdentifier);
+        
+        /// <summary>
+        /// Weather to not throw a VariableNotFoundException if no match is found.
+        /// </summary>
+        bool ThrowIfNotFound { get; set; }
     }
 }

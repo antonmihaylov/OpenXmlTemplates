@@ -1,0 +1,45 @@
+{
+  "name": "Antoniantaz",
+  "addresses": [
+    {
+      "city": {
+        "name": "Novigrad",
+        "province": "Plovdiv"
+      },
+      "streets": [
+        {
+          "name": "First street",
+          "number": 24
+        },
+        {
+          "name": "Second Street",
+          "number": 68
+        }
+      ],
+      "phoneNumbers": [
+        "0000",
+        "1111"
+      ]
+    },
+    {
+      "city": {
+        "name": "Khan",
+        "province": "Plovdiv"
+      },
+      "streets": [
+        {
+          "name": "Third street",
+          "number": 28
+        },
+        {
+          "name": "Fourth Street",
+          "number": 44
+        }
+      ],
+      "phoneNumbers": [
+        "2222",
+        "3333"
+      ]
+    }
+  ]
+}

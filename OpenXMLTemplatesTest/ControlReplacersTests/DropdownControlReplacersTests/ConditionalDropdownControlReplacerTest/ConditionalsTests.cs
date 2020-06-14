@@ -4,6 +4,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using NUnit.Framework;
 using OpenXMLTemplates;
 using OpenXMLTemplates.ControlReplacers.DropdownControlReplacers;
+using OpenXMLTemplates.Documents;
 using OpenXMLTemplates.Utils;
 using OpenXMLTemplates.Variables;
 
@@ -15,21 +16,20 @@ namespace OpenXMLTempaltesTest.ControlReplacersTests.DropdownControlReplacersTes
         [Test]
         public void ReplacedConditionalDropdownContentControls()
         {
-            MemoryStream stream = new MemoryStream();
-            string filePath = this.CurrentFolder() + "Doc.docx";
+            var filePath = this.CurrentFolder() + "Doc.docx";
 
-            using WordprocessingDocument doc = WordFileUtils.OpenFile(filePath, stream);
+            using var doc = new TemplateDocument(filePath);
 
-            string json = File.ReadAllText(this.CurrentFolder() + "data.json");
+            var json = File.ReadAllText(this.CurrentFolder() + "data.json");
 
-            VariableSource src = new VariableSource();
+            var src = new VariableSource();
             src.LoadDataFromJson(json);
-            ConditionalDropdownControlReplacer replacer = new ConditionalDropdownControlReplacer(src);
-            replacer.ReplaceAll(doc);
+            var replacer = new ConditionalDropdownControlReplacer();
+            replacer.ReplaceAll(doc, src);
 
-            SdtElement c1 = doc.FindContentControl("conditional_isValid");
-            SdtElement c2 = doc.FindContentControl("conditional_isInvalid");
-            SdtElement c3 = doc.FindContentControl("conditional_isInvalid_or_isValid");
+            var c1 = doc.WordprocessingDocument.FindContentControl("conditional_isValid");
+            var c2 = doc.WordprocessingDocument.FindContentControl("conditional_isInvalid");
+            var c3 = doc.WordprocessingDocument.FindContentControl("conditional_isInvalid_or_isValid");
 
 
             Assert.NotNull(c1);
@@ -39,7 +39,7 @@ namespace OpenXMLTempaltesTest.ControlReplacersTests.DropdownControlReplacersTes
             Assert.AreEqual("THIS IS VALID", c1.GetTextElement().Text);
             Assert.AreEqual("THIS IS VALID", c2.GetTextElement().Text);
             Assert.AreEqual("THIS IS VALID", c3.GetTextElement().Text);
-            doc.AssertValid();
+            doc.WordprocessingDocument.AssertValid();
             doc.SaveAs(this.CurrentFolder() + "result.docx");
 
             doc.Close();

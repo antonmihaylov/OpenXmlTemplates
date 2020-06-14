@@ -13,15 +13,19 @@ namespace OpenXMLTemplates.Variables
     ///    - Simple variable identifier - pointing to the name of the property (e.g. "name")
     ///    - Nested variable identifier - pointing to a property of a property (e.g. "address.street")
     ///    - Array index identifier - pointing to an array item at a specified index (e.g. "customers[1]")
-    ///    
-    /// Examples:
+    /// </summary>
+    /// <example>
+    /// For example:
     ///     Variable Identifier:                        Data:                           Extracted value:
     ///     - name                                - { name: "Ivar" }                    - "Ivar"
     ///     - address.street               - { address: {street: "Jumpstreet"}}         - "Jumpstreet"
     ///     - customers[1]                 - { customers: ["Ivar", "Rick"]}             - "Rick"
-    /// </summary>
+    /// </example>
     public class VariableSource : IVariableSource
     {
+        /// <summary>
+        /// The data that this variable source uses
+        /// </summary>
         public IDictionary Data { get; set; }
 
         /// <summary>
@@ -37,6 +41,11 @@ namespace OpenXMLTemplates.Variables
         public VariableSource(IDictionary dataSource) : this()
         {
             this.Data = dataSource;
+        }
+
+        public VariableSource(string json) : this()
+        {
+            this.LoadDataFromJson(json);
         }
         
         
@@ -54,8 +63,11 @@ namespace OpenXMLTemplates.Variables
         /// <exception cref="IncorrectVariableTypeException"></exception>
         public T GetVariable<T>(string variabeIdentifier)
         {
-            object lastValue = GetVariable(variabeIdentifier);
+            var lastValue = GetVariable(variabeIdentifier);
 
+            if (lastValue == default)
+                return default;
+            
             if (!(lastValue is T casted))
                 throw new IncorrectVariableTypeException(variabeIdentifier, lastValue.GetType(), typeof(T));
 
@@ -77,15 +89,15 @@ namespace OpenXMLTemplates.Variables
 
             if (Data == null || Data.Count == 0) return null;
 
-            IDictionary lastNestedStructure = Data;
+            var lastNestedStructure = Data;
             IList lastList = null;
             object lastValue = null;
 
 
-            foreach (string id in identifierSplittedByDot)
+            foreach (var id in identifierSplittedByDot)
             {
                 if (ParseVariableIdentifier(variabeIdentifier, id,
-                    ref lastList, ref lastNestedStructure, ref lastValue, out object variableFromDictionary))
+                    ref lastList, ref lastNestedStructure, ref lastValue, out var variableFromDictionary))
                     return variableFromDictionary;
             }
 
@@ -109,7 +121,7 @@ namespace OpenXMLTemplates.Variables
                         "A list item identifier was provided, but not list was found");
                 try
                 {
-                    int listIndexIdentifier = int.Parse(singleIdentifier.Replace("[", "").Replace("]", ""));
+                    var listIndexIdentifier = int.Parse(singleIdentifier.Replace("[", "").Replace("]", ""));
 
                     if (listIndexIdentifier >= lastList.Count)
                         throw new IncorrectIdentifierException(fullIdentifier,
@@ -172,7 +184,7 @@ namespace OpenXMLTemplates.Variables
         /// </summary>
         public void LoadDataFromJson(string json)
         {
-            object deserialized = DeserializeJsonToObject(json);
+            var deserialized = DeserializeJsonToObject(json);
             if (deserialized is IDictionary dictionary)
                 this.Data = dictionary;
             else throw new JsonException("The provided JSON string must be a JSON object and not an array");

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace OpenXMLTemplates.Utils
@@ -7,46 +8,47 @@ namespace OpenXMLTemplates.Utils
     {
         private static readonly OpenSettings DefaultOpenSettings = new OpenSettings()
         {
-            AutoSave = true,
+            AutoSave = false,
             //MarkupCompatibilityProcessSettings = 
             //    new MarkupCompatibilityProcessSettings(
             //        MarkupCompatibilityProcessMode.ProcessAllParts, 
             //        FileFormatVersions.Office2013)
         };
 
-        
+
         /// <summary>
         /// Opens a word file by using the default settings.
-        /// If no stream is provided as the second argument, a new Memory Stream is created
         /// </summary>
         /// <param name="path">The word file path</param>
-        /// <param name="stream">Optional stream - in case you need to reuse it later. A new stream is created if it is not provided</param>
-        /// <returns>The opened OpenXML WordprocessingDocument</returns>
-        public static WordprocessingDocument OpenFile(string path, Stream stream = null)
+        public static WordprocessingDocument OpenFile(string path)
         {
-            return OpenFile(path, DefaultOpenSettings, stream);
+            return OpenFile(path, DefaultOpenSettings);
         }
 
 
         /// <summary>
         /// Opens a word file by using provided settings.
-        /// If no stream is provided as the third argument, a new Memory Stream is created
         /// </summary>
         /// <param name="path">The word file path</param>
         /// <param name="openSettings">Settings when opening a document</param>
-        /// <param name="stream">Optional stream - in case you need to reuse it later. A new stream is created if it is not provided</param>
         /// <returns>The opened OpenXML WordprocessingDocument</returns>
-        public static WordprocessingDocument OpenFile(string path, OpenSettings openSettings, Stream stream = null)
+        public static WordprocessingDocument OpenFile(string path, OpenSettings openSettings)
         {
-            if (stream == null)
-                stream = new MemoryStream();
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentNullException(nameof(path));
 
-            //Read the file and write it to a stream
-            var fileBytes = File.ReadAllBytes(path);
+            var ext = Path.GetExtension(path);
+            if (ext != ".doc" && ext != ".docx")
+                throw new FileFormatException(new Uri(path), "The supported formats are .doc and .docx");
 
-            stream.Write(fileBytes, 0, fileBytes.Length);
+            //Read the file and write it to a stream.
+            using var stream = File.Open(path, FileMode.Open);
+            //Let's not risk corrupting the original file and feed the document a memorystream instead
+            var memoryStream = new MemoryStream();
+            stream.CopyTo(memoryStream);
 
-            return WordprocessingDocument.Open(stream, true, openSettings);
+            // The WordprocessingDocument should dispose the stream. (I hope)
+            return WordprocessingDocument.Open(memoryStream, true, openSettings);
         }
     }
 }

@@ -6,9 +6,7 @@ using System.Xml;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
-using OpenXMLTemplates.ControlReplacers;
-using OpenXMLTemplates.Utils;
-using OpenXMLTemplates.Variables;
+using OpenXMLTemplates.Documents;
 
 namespace OpenXMLTemplates
 {
@@ -27,25 +25,11 @@ namespace OpenXMLTemplates
     public static class OpenXmlExtensions
     {
         /// <summary>
-        /// Replaces the custom constrols and the Xmlpart inside a document
-        /// </summary>
-        public static void ReplaceAll(this WordprocessingDocument doc, string jsonData, string xmlNamespace)
-        {
-            VariableSource source = new VariableSource();
-            source.LoadDataFromJson(jsonData);
-
-            doc.ReplaceAllControlReplacers(source);
-            doc.AddOrReplaceCustomXmlPart(jsonData, xmlNamespace);
-        }
-        
-        
-
-        /// <summary>
         /// Returns the xmlns namespace of the open xml part
         /// </summary>
         public static string GetNamespace(this OpenXmlPart xmlPart)
         {
-            using XmlTextReader xReader = new XmlTextReader(xmlPart.GetStream(FileMode.Open, FileAccess.Read));
+            using var xReader = new XmlTextReader(xmlPart.GetStream(FileMode.Open, FileAccess.Read));
             xReader.MoveToContent();
             return xReader.NamespaceURI;
         }
@@ -57,18 +41,18 @@ namespace OpenXMLTemplates
         {
             var placeholders = sdtElement.Descendants<RunStyle>().Where(rs => rs.Val == "PlaceholderText");
 
-            foreach (RunStyle placeHolder in placeholders)
+            foreach (var placeHolder in placeholders)
                 placeHolder.Remove();
 
             var placeholders2 = sdtElement.Descendants<ShowingPlaceholder>();
 
-            foreach (ShowingPlaceholder placeHolder in placeholders2)
+            foreach (var placeHolder in placeholders2)
                 placeHolder.Remove();
 
             var textElements = sdtElement.Descendants<Text>();
             Text firstElement = null;
             var first = true;
-            foreach (Text element in textElements)
+            foreach (var element in textElements)
             {
                 if (first)
                 {
@@ -114,13 +98,23 @@ namespace OpenXMLTemplates
                     e.GetContentControlTag() == tagName);
         }
 
+        /// <summary>
+        /// Findss all content controls within this document by their tag name
+        /// </summary>
+        public static IEnumerable<SdtElement> FindContentControls(this WordprocessingDocument doc, string tagName)
+        {
+            return doc.ContentControls()
+                .Where(e =>
+                    e.GetContentControlTag() == tagName);
+        }
+
 
         /// <summary>
         /// Finds the tag of a content control
         /// </summary>
         public static string GetContentControlTag(this SdtElement sdtElement)
         {
-            Tag tag = sdtElement.SdtProperties.GetFirstChild<Tag>();
+            var tag = sdtElement.SdtProperties?.GetFirstChild<Tag>();
             if (tag == null || !tag.Val.HasValue) return null;
             return tag.Val.Value;
         }
@@ -133,6 +127,37 @@ namespace OpenXMLTemplates
             return e is SdtBlock || e is SdtRun;
         }
 
+
+        /// <summary>
+        /// Verifies if this element is a descendant of a content control anywhere up the line
+        /// </summary>
+        public static bool IsDescendantOfAContentControl(this OpenXmlElement e, out SdtElement contentControlParent)
+        {
+            var parent = e.Parent;
+            while (parent != null)
+            {
+                if (parent.IsContentControl())
+                {
+                    contentControlParent = (SdtElement) parent;
+                    return true;
+                }
+
+                parent = parent.Parent;
+            }
+
+            contentControlParent = null;
+            return false;
+        }
+
+        /// <summary>
+        /// Verifies if this element is a descendant of a content control anywhere up the line
+        /// </summary>
+        public static bool IsDescendantOfAContentControl(this OpenXmlElement e)
+        {
+            return IsDescendantOfAContentControl(e, out var par);
+        }
+
+
         /// <summary>
         /// Finds all content controls of this OpenXmlPart
         /// </summary>
@@ -142,14 +167,14 @@ namespace OpenXMLTemplates
             return part.RootElement.ContentControls();
         }
 
-        
+
         /// <summary>
         /// Finds all content controls of this OpenXmlElement
         /// </summary>
         public static IEnumerable<SdtElement> ContentControls(this OpenXmlElement element)
         {
             return element
-                .Descendants<SdtElement>();
+                .DescendantsBreadthFirst<SdtElement>();
         }
 
         /// <summary>
@@ -190,6 +215,8 @@ namespace OpenXMLTemplates
         /// </summary>
         public static ContentControlType GetContentControlType(this SdtElement sdtElement)
         {
+            if (sdtElement.SdtProperties == null) return ContentControlType.Other;
+
             if (sdtElement.SdtProperties.GetFirstChild<SdtContentText>() != null)
                 return ContentControlType.PlainText;
 
@@ -214,5 +241,42 @@ namespace OpenXMLTemplates
 
             return ContentControlType.RichText;
         }
+
+
+        /// <summary>
+        /// Enumerates all of the descendants of the element using breadth first algorithm
+        /// </summary>
+        /// <param name="element"></param>
+        public static IEnumerable<OpenXmlElement> DescendantsBreadthFirst(this OpenXmlElement element)
+        {
+            return DescendantsBreadthFirst<OpenXmlElement>(element);
+        }
+
+        /// <summary>
+        /// Enumerates all of the descendants of the element using breadth first algorithm
+        /// </summary>
+        /// <param name="element"></param>
+        public static IEnumerable<T> DescendantsBreadthFirst<T>(this OpenXmlElement element)
+            where T : OpenXmlElement
+        {
+            if (element.FirstChild == null) yield break;
+
+            var queue = new Queue<OpenXmlElement>();
+            queue.Enqueue(element);
+
+            while (queue.Count > 0)
+            {
+                var currentRoot = queue.Dequeue();
+                var rootChildren = currentRoot.ChildElements;
+
+                foreach (var rootChild in rootChildren)
+                {
+                    if (rootChild is T child)
+                        yield return child;
+                    queue.Enqueue(rootChild);
+                }
+            }
+        }
+    
     }
 }

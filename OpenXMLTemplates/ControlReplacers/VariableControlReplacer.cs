@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using DocumentFormat.OpenXml.Wordprocessing;
+using OpenXMLTemplates.Documents;
 using OpenXMLTemplates.Variables;
 using OpenXMLTemplates.Variables.Exceptions;
 
@@ -13,35 +13,35 @@ namespace OpenXMLTemplates.ControlReplacers
     {
         public override string TagName => "variable";
 
+        protected override OpenXmlExtensions.ContentControlType ContentControlTypeRestriction =>
+            OpenXmlExtensions.ContentControlType.Undefined;
+
         protected override string ProcessControl(string variableIdentifier, IVariableSource variableSource,
-            SdtElement contentControl, List<string> otherParameters)
+            ContentControl contentControl, List<string> otherParameters)
         {
             try
             {
-                object variable = variableSource.GetVariable(variableIdentifier);
+                var variable = variableSource.GetVariable(variableIdentifier);
 
-                if (variable == null) return "";
+                if (variable == null) return null;
+
+                //If the variable is not of a complex type or if the content control does not support nested controls,
+                //(ie, is not a RichText control), then just return the string representation of the variable
+                if (contentControl.Type != OpenXmlExtensions.ContentControlType.RichText ||
+                    !(variable is Dictionary<string, object> innerData)) return variable.ToString();
+
+                //If the variable is complex (dictionary) type and the control is rich text, we need to do
+                //recursive replacement. For that we will add it to the queue
+                var innerVariableSource = new VariableSource(innerData);
+                Enqueue(new ControlReplacementExecutionData
+                    {Controls = contentControl.DescendingControls, VariableSource = innerVariableSource});
                 
-                if (contentControl.GetContentControlType() == OpenXmlExtensions.ContentControlType.RichText &&
-                    variable is Dictionary<string, object> innerData)
-                {
-                    VariableSource innerVariableSource = new VariableSource(innerData);
-                    contentControl.ReplaceAllControlReplacers(innerVariableSource);
-                    return null;
-                }
-                else
-                {
-                    return variable.ToString();
-                }
+                return null;
             }
             catch (VariableNotFoundException)
             {
-                return "";
+                return null;
             }
-        }
-
-        public VariableControlReplacer(IVariableSource variableSource) : base(variableSource, OpenXmlExtensions.ContentControlType.Undefined)
-        {
         }
     }
 }

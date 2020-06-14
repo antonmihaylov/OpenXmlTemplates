@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
 using OpenXMLTemplates.Variables;
 
@@ -20,20 +19,16 @@ namespace OpenXMLTemplates.ControlReplacers.DropdownControlReplacers
             SdtContentDropDownList dropdown, List<string> otherParameters)
         {
             //This is the list that we should check to see if the value should be singular or plural
-            IList list = data.GetVariable<IList>(variableIdentifier);
-            bool singular = list.Count <= 1;
+            var list = data.GetVariable<IList>(variableIdentifier);
+            var singular = list.Count <= 1;
 
             if (dropdown.ChildElements.Count == 0) return null;
 
-            OpenXmlElement dropdownChildElement = singular || dropdown.ChildElements.Count == 1
+            var dropdownChildElement = singular || dropdown.ChildElements.Count == 1
                 ? dropdown.ChildElements[0]
                 : dropdown.ChildElements[1];
 
             return GetListItemValue(dropdownChildElement);
-        }
-
-        public SingularDropdownControlReplacer(IVariableSource variableSource) : base(variableSource)
-        {
         }
     }
 }

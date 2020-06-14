@@ -9,9 +9,9 @@ namespace OpenXMLTemplates.Utils
 {
     public static class CustomXmlPartExtensions
     {
-        /**
-         * Returns the Custom XML parts from a Word document
-         */
+        /// <summary>
+        /// Returns the Custom XML parts from a Word document
+        /// </summary>
         public static IEnumerable<CustomXmlPart> GetCustomXmlParts(this WordprocessingDocument doc)
         {
             return doc.MainDocumentPart.CustomXmlParts;
@@ -61,7 +61,7 @@ namespace OpenXMLTemplates.Utils
             XNamespace myNs = xmlNamespace;
 
             //Assign the namespace to the elements
-            foreach (XElement el in xDoc.Descendants())
+            foreach (var el in xDoc.Descendants())
                 el.Name = myNs + el.Name.LocalName;
 
             return doc.AddOrReplaceCustomXmlPart(xDoc);
@@ -83,13 +83,13 @@ namespace OpenXMLTemplates.Utils
         /// <returns>The replaced or newly created CustomXmlPart</returns>
         public static CustomXmlPart AddOrReplaceCustomXmlPart(this WordprocessingDocument doc, XDocument xmlData)
         {
-            string xmlNamespace = xmlData.GetXmlNamespace();
+            var xmlNamespace = xmlData.GetXmlNamespace();
 
             if (string.IsNullOrWhiteSpace(xmlNamespace))
                 throw new XmlNamespaceNotFoundException("Xml namespace not provided in the XDocument");
 
             //Try to get the custom xml part and if nothing is found add it as a custom xml part
-            CustomXmlPart ourPart = doc.GetCustomXmlPart(xmlNamespace) ?? doc.MainDocumentPart.AddCustomXmlPart(CustomXmlPartType.CustomXml);
+            var ourPart = doc.GetCustomXmlPart(xmlNamespace) ?? doc.MainDocumentPart.AddCustomXmlPart(CustomXmlPartType.CustomXml);
             ourPart.FeedData(xmlData);
             return ourPart;
         }
@@ -100,7 +100,7 @@ namespace OpenXMLTemplates.Utils
         /// </summary>
         private static void FeedData(this OpenXmlPart ourPart, XDocument xmlData)
         {
-            using MemoryStream xmlMs = new MemoryStream();
+            using var xmlMs = new MemoryStream();
             xmlData.Save(xmlMs);
             xmlMs.Position = 0;
             ourPart?.FeedData(xmlMs);

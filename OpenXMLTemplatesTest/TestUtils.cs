@@ -12,7 +12,7 @@ namespace OpenXMLTempaltesTest
         /// </summary>
         internal static string CurrentFolder(this object testObject)
         {
-            string type = testObject.GetType().Namespace?.Replace("OpenXMLTempaltesTest.", "").Replace(".", "/");
+            var type = testObject.GetType().Namespace?.Replace("OpenXMLTempaltesTest.", "").Replace(".", "/");
             return TestContext.CurrentContext.TestDirectory + $"/{type}/";
         }
 
@@ -22,10 +22,10 @@ namespace OpenXMLTempaltesTest
         /// <param name="doc"></param>
         internal static void AssertValid(this WordprocessingDocument doc)
         {
-            OpenXmlValidator validator = new OpenXmlValidator();
+            var validator = new OpenXmlValidator();
             var errors = validator.Validate(doc.MainDocumentPart).ToList();
-            int count = 0;
-            foreach (ValidationErrorInfo error in
+            var count = 0;
+            foreach (var error in
                 errors)
             {
                 count++;

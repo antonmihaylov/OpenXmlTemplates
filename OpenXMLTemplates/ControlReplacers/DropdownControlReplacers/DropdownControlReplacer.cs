@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
+using OpenXMLTemplates.Documents;
 using OpenXMLTemplates.Variables;
 
 namespace OpenXMLTemplates.ControlReplacers.DropdownControlReplacers
@@ -11,10 +11,8 @@ namespace OpenXMLTemplates.ControlReplacers.DropdownControlReplacers
     /// </summary>
     public abstract class DropdownControlReplacer : ControlReplacer
     {
-        public DropdownControlReplacer(IVariableSource variableSource) : base(variableSource,
-            OpenXmlExtensions.ContentControlType.Dropdown)
-        {
-        }
+        protected override OpenXmlExtensions.ContentControlType ContentControlTypeRestriction =>
+            OpenXmlExtensions.ContentControlType.Dropdown;
 
         /// <summary>
         /// Process a dropdown control, do something with the data and return the value that should get displayed
@@ -29,10 +27,10 @@ namespace OpenXMLTemplates.ControlReplacers.DropdownControlReplacers
 
 
         protected override string ProcessControl(string variableIdentifier, IVariableSource variableSource,
-            SdtElement contentControl, List<string> otherParameters)
+            ContentControl contentControl, List<string> otherParameters)
 
         {
-            SdtContentDropDownList dropdown = contentControl.SdtProperties.GetFirstChild<SdtContentDropDownList>();
+            var dropdown = contentControl.SdtElement.SdtProperties.GetFirstChild<SdtContentDropDownList>();
             return ProcessDropdownControl(variableIdentifier, variableSource, dropdown, otherParameters);
         }
 
@@ -43,10 +41,9 @@ namespace OpenXMLTemplates.ControlReplacers.DropdownControlReplacers
         {
             if (!(element is ListItem listItem)) return null;
 
-            string value = listItem.Value.Value;
+            var value = listItem.Value.Value;
             if (string.IsNullOrWhiteSpace(value))
                 value = listItem.DisplayText;
-            Debug.WriteLine("Value: " + value);
             return value;
         }
     }

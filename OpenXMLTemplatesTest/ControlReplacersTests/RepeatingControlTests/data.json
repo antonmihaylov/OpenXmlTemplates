@@ -14,5 +14,22 @@
       "name": "Second name",
       "address": "Second address"
     }
+  ],
+  "nested": [
+    {
+      "name": "List 1",
+      "nestedList": [
+        "item1-1",
+        "item1-2",
+        "item1-3"
+      ]
+    },
+    {
+      "name": "List 2",
+      "nestedList": [
+        "item2-1",
+        "item2-2"
+      ]
+    }
   ]
 }

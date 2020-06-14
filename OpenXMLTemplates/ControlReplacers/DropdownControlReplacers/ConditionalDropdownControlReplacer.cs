@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Wordprocessing;
 using OpenXMLTemplates.Variables;
 
@@ -22,24 +21,20 @@ namespace OpenXMLTemplates.ControlReplacers.DropdownControlReplacers
         public override string TagName => "conditional";
 
 
-        protected override string ProcessDropdownControl(string variableIdentifier,IVariableSource data,
+        protected override string ProcessDropdownControl(string variableIdentifier, IVariableSource data,
             SdtContentDropDownList dropdown, List<string> otherParameters)
         {
             if (dropdown.ChildElements.Count == 0) return null;
             if (dropdown.ChildElements.Count == 1) return GetListItemValue(dropdown.ChildElements[0]);
 
-            bool value =
+            var value =
                 ConditionalUtils.EvaluateConditionalVariableWithParameters(variableIdentifier, data, otherParameters);
 
-            OpenXmlElement dropdownChildElement = value
+            var dropdownChildElement = value
                 ? dropdown.ChildElements[0]
                 : dropdown.ChildElements[1];
 
             return GetListItemValue(dropdownChildElement);
-        }
-
-        public ConditionalDropdownControlReplacer(IVariableSource variableSource) : base(variableSource)
-        {
         }
     }
 }

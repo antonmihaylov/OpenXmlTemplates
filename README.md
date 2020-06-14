@@ -2,15 +2,13 @@
 [![GitHub contributors](https://img.shields.io/github/contributors/Naereen/StrapDown.js.svg)](https://github.com/antonmihaylov/OpenXmlTemplates/graphs/contributors)
 [![GitHub issues](https://img.shields.io/github/issues/Naereen/StrapDown.js.svg)](https://GitHub.com/antonmihaylov/OpenXmlTemplates/issues/)
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
-[![LinkedIn][linkedin-shield]](https://www.linkedin.com/in/anton-mihaylov-1ba49319a/)
-
 
 
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
   <!-- <a href="https://github.com/github_username/repo">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+    <img src="images/logo.png" alt="Logo" width="80" height="80"/>
   </a>  -->
 
   <h2 align="center">Open XML Templates</h2>
@@ -52,8 +50,9 @@
 </div>
 
 With the library you can easily:
-* Replace text with variables
-* Repeat text based on a list
+* Create word templates using only content controls and their tags
+* Replace the content controls in a template with acutal data from any source (json and a dictionary are natively supported)
+* Repeat text based on a list (with nested variables and lists)
 * Conditionaly remove text section
 * Specify a singular and a plural word that should be used conditionaly, based of the length of a list
 
@@ -80,7 +79,7 @@ To get a local copy up and running use one of the following methods:
 nuget install OpenXMLTemplates
 ```
 
- or clone the repo
+ or clone the repo and reference OpenXMLTemplates.csproj in your project
  
 ```
 git clone https://github.com/antonmihaylov/OpenXmlTemplates.git
@@ -89,6 +88,7 @@ git clone https://github.com/antonmihaylov/OpenXmlTemplates.git
 <!-- USAGE EXAMPLES -->
 ## Usage
 
+####To create a template:
 
 1. Open your document in Word
 2. Open the *Developer* tab in the ribbon 
@@ -97,40 +97,77 @@ git clone https://github.com/antonmihaylov/OpenXmlTemplates.git
 3. Under the *Controls* tab - add a new *Content Control* of your liking (*Plain text* is the simplest one - just text with formatting)
 4. Select the newly added *Content control* and click *Properties* in the *Developer* ribbon
 5. Change the *Tag* in the popup window to match one of the [supported tags](#supported-tags) (the tag name is case-insensitive - variable is the same as VARIABLE)
-6. Open the .docx file using WordFileUtils.OpenFile(path_to_file)
-7. Call ReplaceAllControlReplacers on the document object with parameter - the json data you want to provide
-8. Save the document using the SaveAs method
 
-Note: to insert a new line, add a new line character (\r\n, \n\r, \n) in the data.
+####To create a document from a template, using the default content control replacers:
+
+1. Create a new TemplateDocument. This represents your document and it neatly handles all
+content controls in it, as well as the open/save/close file logic. Don't forget to call Dispose() on it
+after you're done, or just use an "using" statement:
+    ```c#
+         using var doc = new TemplateDocument("path/to/my/document.docx");
+    ```
+2. Create a new VariableSource (currently available sources are a json string and a dictionary. 
+You can also create your own class that implements IVariableSource). The variable source handles 
+your data and extracts it in a way that the template engine can read it.
+    ```c#
+        var src = new VariableSource(jsonString); 
+    ```
+3. Create an OpenXmlTemplateEngine. A default one is provided (DefaultOpenXmlTemplateEngine). 
+The default one contains all control replacers listed in the readme. You can disable/enable a control replacer by 
+modifying the IsEnabled variable in it. You can also register your own replacer by callin RegisterReplacer on the engine.
+    ```c#
+        var engine = new DefaultOpenXmlTemplateEngine();
+    ```
+4. Call the ReplaceAll method on the engine using the document and the variable source
+    ```c#
+        engine.ReplaceAll(doc, src);
+    ```
+5. Save the edited document
+    ```c#
+       doc.SaveAs("result.docx"); 
+   ```
+ 
 
 ## Supported Tags
 
 Note that if your variable names contain an underscore results may be unpredictable!
+Note: to insert a new line, add a new line character (\r\n, \n\r, \n) in the data you provide, it will be parsed as a line break
 
 ### Variable
 
-* Tag name: "variable_\<ENTER THE NAME OF YOUR VARIABLE\>" (the *variable* keyword is case-insensitive)
+* Tag name: "variable_\<NAME OF YOUR VARIABLE\>" (the *variable* keyword is case-insensitive)
 * Replaces the text inside the control with the value of the variable with the provided name
 * Supports nested variable names (e.g. address.street)
 * Supports array access (e.g. names[0])
-* Supports nested content controls using a *Rich text box* - the nested variable name is relative to the parent
-  
+* Supports nested variables using rich text content controls. For example: a rich text content control with
+tag name address, followed by an inner content control with tag name variable_street is the same as variable.street
+* Supports variables inside repeating items, the variable name is relative to the repeated item.
+
   Example:
+ 
+ - See example files in the [OpenXmlTemplatesTest/ControlReplacerTests/VariableControlReplacerTests folder](/OpenXMLTemplatesTest/ControlReplacersTests/VariableControlReplacerTests) and in
+    the [OpenXmltemplatesTest/EngineTest folder](/OpenXMLTemplatesTest/EngineTest)
   
  ![](https://github.com/antonmihaylov/OpenXmlTemplates/blob/master/ReadmeImages/example_variable.png)
  
+ 
  ### Repeating
 
-* Tag name: "repeating_\<ENTER THE NAME OF YOUR VARIABLE\>"  (the *repeating* keyword is case-insensitive)
+* Tag name: "repeating_\<NAME OF YOUR VARIABLE\>"  (the *repeating* keyword is case-insensitive)
 * Repeats the content control as many times as there are items in the variable identified by the provided variable name.
-* Complex fields with inner content controls are supported. Таг the inner fields with a tag as: "repeatingitem_\<VARIABLE NAME\>". Here the variable name is relative to the list item
+* Complex fields with inner content controls are supported. Use the inner controls as you would normally, except
+that the variable names will be relative to the list item. All default content controls can be nested.
+* Add an inner content control with tag variable_index to insert the index of the current item (1-based)
 * You can add extra arguments to the tag name (e.g. "repeating_\<VARIABLE NAME\>_extraparam1_extraparam2..."):
-  * "inline" -  doesn't insert a new line after each item (e.g. "repeating_\<VARIABLE NAME\>_inline")
   * "separator_\<INSERT SEPARATOR STRING\>"- inserts a separator after each item (e.g. "repeating_\<VARIABLE NAME\>_separator_, " - this inserts a comma between each item)
   * "lastSeparator_\<INSERT SEPARATOR STRING\>"- inserts a special sepeartor before the last item (e.g. "repeating_\<VARIABLE NAME\>_separator_, _lastSeparator_and " - this inserts a comma between each item and an "and" before the last item)
 
   Example:
   
+ 
+ - See example files in the [OpenXmlTemplatesTest/ControlReplacerTests/RepeatingControlTests folder](/OpenXMLTemplatesTest/ControlReplacersTests/RepeatingControlTests) and in
+    the [OpenXmltemplatesTest/EngineTest folder](/OpenXMLTemplatesTest/EngineTest)
+    
  ![](https://github.com/antonmihaylov/OpenXmlTemplates/blob/master/ReadmeImages/example_repeating.png)
 
 
@@ -138,7 +175,6 @@ Note that if your variable names contain an underscore results may be unpredicta
 
 * Tag name: "conditionalRemove_\<ENTER THE NAME OF YOUR VARIABLE\>"  (the *conditionalRemove* keyword is case-insensitive)
 * Removes content controls based on the value of the provided variable
-* Complex fields with inner content controls are supported. Таг the inner fields with a tag as: "repeatingitem_\<VARIABLE NAME\>". Here the variable name is relative to the list item
 * If the variable value is evaluated to true (True, "true", 1, "1", non-empty list, non-empty dict) the control stays. If it doesn't - it is removed
 * You can add extra arguments to the tag name (e.g. "conditionalRemove_\<VARIABLE NAME\>_extraparam1_extraparam2..."):
   * "OR" - applies an OR operation to the values. The control is removed if none of the values between the operator are true. (e.g. "conditionalRemove_\<VARIABLE NAME 1\>_or_\<VARIABLE NAME 2\>")
@@ -147,6 +183,11 @@ Note that if your variable names contain an underscore results may be unpredicta
 * You can also chain multiple arguments, e.g.  "conditionalRemove_\<VARIABLE NAME 1\>_not_or__\<VARIABLE NAME 2\>_and_\<VARIABLE NAME 3\>". Note that the expression is evaluated from left to right, with no recognition for the order of operations.
 
   Example:
+  
+   
+ - See example files in the [OpenXmlTemplatesTest/ControlReplacerTests/ConditionalControlReplacerTest folder](/OpenXMLTemplatesTest/ControlReplacersTests/ConditionalControlReplacerTest) and in
+    the [OpenXmltemplatesTest/EngineTest folder](/OpenXMLTemplatesTest/EngineTest)
+    
   
  ![](https://github.com/antonmihaylov/OpenXmlTemplates/blob/master/ReadmeImages/example_conditionalRemove.png)
 
@@ -159,6 +200,10 @@ Note that if your variable names contain an underscore results may be unpredicta
 * If the list variable has a length of 1 (or 0) the first value from the dropdown is used. If it's more than one - the second value from the dropdown is used.
 
   Example:
+ 
+    
+ - See example files in the [OpenXmlTemplatesTest/ControlReplacerTests/DropdownControlReplacersTests/SingularsTest folder](/OpenXMLTemplatesTest/ControlReplacersTests/DropdownControlReplacersTests/SingularsTest)
+    
   
  ![](https://github.com/antonmihaylov/OpenXmlTemplates/blob/master/ReadmeImages/example_singular.png)
  
@@ -171,6 +216,7 @@ Note that if your variable names contain an underscore results may be unpredicta
 * If it's evaluated to true (aka is true, "true", 1, "1", non-empty list, non-empty dict) - the first value from the dropdown is used. If it's not - the second value is used.
 * You can use the same extra arguments as in the Conditional remove replacer 
 
+ - See example files in the [OpenXmlTemplatesTest/ControlReplacerTests/DropdownControlReplacersTests/ConditionalDropdownControlReplacerTest folder](/OpenXMLTemplatesTest/ControlReplacersTests/DropdownControlReplacersTests/ConditionalDropdownControlReplacerTest)
 
 
 <!-- ROADMAP -->

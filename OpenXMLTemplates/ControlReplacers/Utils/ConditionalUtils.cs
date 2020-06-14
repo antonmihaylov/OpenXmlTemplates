@@ -22,7 +22,7 @@ namespace OpenXMLTemplates.ControlReplacers
             IVariableSource variableSource,
             List<string> otherParameters)
         {
-            bool value = EvaluateVariable(varIdentifier, variableSource, out object variableValue);
+            var value = EvaluateVariable(varIdentifier, variableSource, out var variableValue);
             
             //If no special parameters are found simply return the found value
             if (otherParameters.Count <= 0) return value;
@@ -30,7 +30,7 @@ namespace OpenXMLTemplates.ControlReplacers
             //Process the extra parameters
             string lastOperator = null;
             
-            foreach (string otherParameter in otherParameters)
+            foreach (var otherParameter in otherParameters)
             {
                 switch (otherParameter)
                 {
@@ -59,7 +59,7 @@ namespace OpenXMLTemplates.ControlReplacers
                                 nextValue = otherParameter;
                             }
 
-                            bool nextValueEvaluated = EvaluateVariableValue(nextValue);
+                            var nextValueEvaluated = EvaluateVariableValue(nextValue);
 
                             switch (lastOperator)
                             {
@@ -141,7 +141,7 @@ namespace OpenXMLTemplates.ControlReplacers
 
         internal static bool EvaluateVariableValue(object variableValue)
         {
-            bool value = true;
+            var value = true;
             if (variableValue == null)
                 value = false;
             else if (variableValue is bool castBool)

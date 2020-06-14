@@ -17,9 +17,9 @@ namespace OpenXMLTempaltesTest.XMLReplacementTest
         [Test]
         public void ReplacesXmlUsingJson()
         {
-            using WordprocessingDocument doc = GetDoc();
+            using var doc = GetDoc();
             
-            string json = File.ReadAllText(this.CurrentFolder() + "XMLReplacement.json");
+            var json = File.ReadAllText(this.CurrentFolder() + "XMLReplacement.json");
 
             doc.AddOrReplaceCustomXmlPart(json, "XMLReplacementTest");
             doc.AssertValid();
@@ -32,9 +32,9 @@ namespace OpenXMLTempaltesTest.XMLReplacementTest
         [Test]
         public void ReplacesXml()
         {
-            using WordprocessingDocument doc = GetDoc();
+            using var doc = GetDoc();
 
-            XDocument xData =
+            var xData =
                 XDocument.Load(this.CurrentFolder() + "XMLReplacement.xml");
 
             doc.AddOrReplaceCustomXmlPart(xData);

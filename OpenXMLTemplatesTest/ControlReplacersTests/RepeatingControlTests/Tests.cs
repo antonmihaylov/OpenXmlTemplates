@@ -1,37 +1,39 @@
 using System.IO;
 using System.Linq;
-using DocumentFormat.OpenXml.Packaging;
 using NUnit.Framework;
 using OpenXMLTemplates;
 using OpenXMLTemplates.ControlReplacers;
-using OpenXMLTemplates.Utils;
+using OpenXMLTemplates.Documents;
 using OpenXMLTemplates.Variables;
 
 namespace OpenXMLTempaltesTest.ControlReplacersTests.RepeatingControlTests
 {
     public class Tests
     {
-        private WordprocessingDocument GetDoc => WordFileUtils.OpenFile(this.CurrentFolder() + "Doc.docx");
+        private TemplateDocument GetDoc => new TemplateDocument(this.CurrentFolder() + "Doc.docx");
         private string GetData => File.ReadAllText(this.CurrentFolder() + "data.json");
 
         [Test]
         public void TestRepeatingControls()
         {
-            using WordprocessingDocument doc = GetDoc;
-            string data = GetData;
+            using var doc = GetDoc;
+            var data = GetData;
 
-            VariableSource src = new VariableSource();
+            var src = new VariableSource();
             src.LoadDataFromJson(data);
 
-            var replacer = new RepeatingControlReplacer(src);
+            var replacer = new RepeatingControlReplacer();
 
-            replacer.ReplaceAll(doc);
+            replacer.ReplaceAll(doc, src);
             doc.SaveAs(this.CurrentFolder() + "result.docx");
 
             Assert.AreEqual(4,
-                doc.ContentControls().Count(cc => cc.GetContentControlTag().StartsWith("repeatingitem")));
+                doc.WordprocessingDocument.ContentControls().Count(cc => cc.GetContentControlTag() != null && cc.GetContentControlTag().StartsWith("repeatingitem")));
 
-            doc.AssertValid();
+            Assert.AreEqual(5,
+                doc.WordprocessingDocument.ContentControls().Count(cc => cc.GetContentControlTag() != null && cc.GetContentControlTag() == "repeating_nestedList"));
+            
+            doc.WordprocessingDocument.AssertValid();
         }
     }
 }

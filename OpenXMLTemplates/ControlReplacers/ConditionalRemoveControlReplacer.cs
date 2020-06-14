@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using DocumentFormat.OpenXml.Wordprocessing;
+using OpenXMLTemplates.Documents;
 using OpenXMLTemplates.Variables;
 
 namespace OpenXMLTemplates.ControlReplacers
@@ -23,17 +23,16 @@ namespace OpenXMLTemplates.ControlReplacers
     ///</summary>
     public class ConditionalRemoveControlReplacer : ControlReplacer
     {
-        public ConditionalRemoveControlReplacer(IVariableSource variableSource) : base(variableSource, OpenXmlExtensions.ContentControlType.Undefined)
-        {
-        }
-
         public override string TagName => "conditionalRemove";
 
+        protected override OpenXmlExtensions.ContentControlType ContentControlTypeRestriction =>
+            OpenXmlExtensions.ContentControlType.Undefined;
+
         protected override string ProcessControl(string variableIdentifier, IVariableSource variableSource,
-            SdtElement contentControl, List<string> otherParameters)
+            ContentControl contentControl, List<string> otherParameters)
 
         {
-            bool value =
+            var value =
                 ConditionalUtils.EvaluateConditionalVariableWithParameters(variableIdentifier, variableSource, otherParameters);
 
             if (!value)

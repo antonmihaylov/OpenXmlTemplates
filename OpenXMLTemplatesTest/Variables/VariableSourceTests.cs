@@ -19,7 +19,7 @@ namespace OpenXMLTempaltesTest
                 {"name", "MyName"}, {"address", addressDict}, {"phones", new List<string> {"123", "12345"}}
             };
 
-            VariableSource source = new VariableSource(data);
+            var source = new VariableSource(data);
             
             Assert.AreEqual("MyName", source.GetVariable<string>("name"));
             Assert.AreEqual("MyStreet", source.GetVariable<string>("address.street"));
