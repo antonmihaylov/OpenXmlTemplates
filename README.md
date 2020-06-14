@@ -88,7 +88,7 @@ git clone https://github.com/antonmihaylov/OpenXmlTemplates.git
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-###To create a template:
+#### To create a template:
 
 1. Open your document in Word
 2. Open the *Developer* tab in the ribbon 
@@ -98,7 +98,7 @@ git clone https://github.com/antonmihaylov/OpenXmlTemplates.git
 4. Select the newly added *Content control* and click *Properties* in the *Developer* ribbon
 5. Change the *Tag* in the popup window to match one of the [supported tags](#supported-tags) (the tag name is case-insensitive - variable is the same as VARIABLE)
 
-###To create a document from a template, using the default content control replacers:
+#### To create a document from a template, using the default content control replacers:
 
 1. Create a new TemplateDocument. This represents your document and it neatly handles all
 content controls in it, as well as the open/save/close file logic. Don't forget to call Dispose() on it
