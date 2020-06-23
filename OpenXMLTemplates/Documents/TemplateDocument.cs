@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 using OpenXMLTemplates.Utils;
 
 namespace OpenXMLTemplates.Documents
@@ -69,7 +70,7 @@ namespace OpenXMLTemplates.Documents
                 }
                 else
                 {
-                    var cc = new ContentControl(sdtElement, false,this);
+                    var cc = new ContentControl(sdtElement, false, this);
                     firstOrderContentControls.Add(cc);
                     allContentControls.Add(cc);
                 }
@@ -96,7 +97,7 @@ namespace OpenXMLTemplates.Documents
             WordprocessingDocument.Close();
         }
 
-  public void SaveAs(string path)
+        public void SaveAs(string path)
         {
             WordprocessingDocument.SaveAs(path);
         }
@@ -111,9 +112,32 @@ namespace OpenXMLTemplates.Documents
         internal void AddControl(ContentControl control, bool isFirstOrder)
         {
             allContentControls.Add(control);
-            if(isFirstOrder)
+            if (isFirstOrder)
                 firstOrderContentControls.Add(control);
             else innerContentControls.Add(control);
+        }
+
+        public void RemoveControlsAndKeepContent()
+        {
+            foreach (var control in allContentControls)
+            {
+                var sdtElement = control.SdtElement;
+
+                var contentElement = sdtElement.Descendants()
+                    .FirstOrDefault(d => d is SdtContentBlock || d is SdtContentRun);
+                if (contentElement != null)
+                {
+                    foreach (var contentElementChildElement in contentElement.ChildElements.ToList())
+                    {
+                        contentElementChildElement.Remove();
+                        sdtElement.InsertBeforeSelf(contentElementChildElement);
+                    }
+                }
+            }
+            
+            allContentControls.Clear();
+            innerContentControls.Clear();
+            firstOrderContentControls.Clear();
         }
     }
 }

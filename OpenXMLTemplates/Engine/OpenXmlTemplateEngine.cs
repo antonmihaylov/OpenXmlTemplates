@@ -12,6 +12,8 @@ namespace OpenXMLTemplates.Engine
     public class OpenXmlTemplateEngine
     {
         protected List<ControlReplacer> controlReplacers;
+    
+        public bool KeepContentControlAfterReplacement = true;
 
 
         public OpenXmlTemplateEngine()
@@ -69,8 +71,11 @@ namespace OpenXMLTemplates.Engine
             }
 
             foreach (var enabledControlReplacer in EnabledControlReplacers())
-            {
                 enabledControlReplacer.ExecuteQueue();
+
+            if (KeepContentControlAfterReplacement == false)
+            {
+                doc.RemoveControlsAndKeepContent();
             }
         }
 
