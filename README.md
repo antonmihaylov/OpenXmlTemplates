@@ -141,6 +141,7 @@ Note: to insert a new line, add a new line character (\r\n, \n\r, \n) in the dat
 * Supports array access (e.g. names[0])
 * Supports nested variables using rich text content controls. For example: a rich text content control with
 tag name address, followed by an inner content control with tag name variable_street is the same as variable.street
+* Note that if you reference a variable from a nested control, that is available in the outer scope, but not in the inner scope - the outer scope variable will be used. 
 * Supports variables inside repeating items, the variable name is relative to the repeated item.
 
   Example:
@@ -157,6 +158,7 @@ tag name address, followed by an inner content control with tag name variable_st
 * Repeats the content control as many times as there are items in the variable identified by the provided variable name.
 * Complex fields with inner content controls are supported. Use the inner controls as you would normally, except
 that the variable names will be relative to the list item. All default content controls can be nested.
+* Note that if you reference a variable from a nested control, that is available in the outer scope, but not in the inner scope (the list item) - the outer scope variable will be used. That is useful if you want to include something in your list item's text output that is available in the global scope only.
 * Add an inner content control with tag variable_index to insert the index of the current item (1-based)
 * You can add extra arguments to the tag name (e.g. "repeating_\<VARIABLE NAME\>_extraparam1_extraparam2..."):
   * "separator_\<INSERT SEPARATOR STRING\>"- inserts a separator after each item (e.g. "repeating_\<VARIABLE NAME\>_separator_, " - this inserts a comma between each item)
