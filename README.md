@@ -127,6 +127,10 @@ modifying the IsEnabled variable in it. You can also register your own replacer 
        doc.SaveAs("result.docx"); 
    ```
  
+ If you want to remove the content controls from the final document, but keep the content you have two options:
+ 1. Use the RemoveControlsAndKeepContent method on the TemplateDocument object 
+ or 
+ 2. Set the KeepContentControlAfterReplacement boolean of the OpenXmlTemplateEngine
 
 ## Supported Tags
 
