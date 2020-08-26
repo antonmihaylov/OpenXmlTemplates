@@ -124,7 +124,7 @@ namespace OpenXMLTemplates
         /// </summary>
         public static bool IsContentControl(this OpenXmlElement e)
         {
-            return e is SdtBlock || e is SdtRun;
+            return e is SdtBlock || e is SdtRun || e is SdtCell;
         }
 
 
