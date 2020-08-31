@@ -8,3 +8,4 @@ IconAssets/
 /**/nuget.txt
 Backup/
 Backup1/
+/**/*.nupkg
