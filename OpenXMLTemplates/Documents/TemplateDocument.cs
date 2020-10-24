@@ -97,9 +97,9 @@ namespace OpenXMLTemplates.Documents
             WordprocessingDocument.Close();
         }
 
-        public void SaveAs(string path)
+        public OpenXmlPackage SaveAs(string path)
         {
-            WordprocessingDocument.SaveAs(path);
+            return WordprocessingDocument.SaveAs(path);
         }
 
         public void RemoveControl(ContentControl contentControl)
