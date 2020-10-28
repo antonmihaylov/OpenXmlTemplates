@@ -51,7 +51,7 @@
 
 With the library you can easily:
 * Create word templates using only content controls and their tags
-* Replace the content controls in a template with acutal data from any source (json and a dictionary are natively supported)
+* Replace the content controls in a template with actual data from any source (json and a dictionary are natively supported)
 * Repeat text based on a list (with nested variables and lists)
 * Conditionaly remove text section
 * Specify a singular and a plural word that should be used conditionaly, based of the length of a list
