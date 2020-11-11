@@ -15,6 +15,7 @@ namespace OpenXMLTemplates.Engine
             RegisterReplacer(new ConditionalDropdownControlReplacer());
             RegisterReplacer(new SingularDropdownControlReplacer());
             RegisterReplacer(new VariableControlReplacer());
+            RegisterReplacer(new PictureControlReplacer());
         }
     }
 }
