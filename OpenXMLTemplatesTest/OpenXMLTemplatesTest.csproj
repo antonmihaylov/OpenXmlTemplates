@@ -97,7 +97,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="EngineTest\Doc.docx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="EngineTest\data.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

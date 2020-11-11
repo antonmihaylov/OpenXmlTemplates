@@ -40,6 +40,7 @@ namespace OpenXMLTemplates.ControlReplacers {
 
         public bool ReplacesOnlyFirstOrderChildren = false;
 
+
         /// <summary>
         /// A tag name that identifies content controls
         /// </summary>
@@ -95,10 +96,9 @@ namespace OpenXMLTemplates.ControlReplacers {
 
         #region Private/Protected methods
 
-
-
-        private void Replace(ControlReplacementExecutionData sdtElement) {
-            foreach (var sdtElementControl in sdtElement.Controls)
+        private void Replace(ControlReplacementExecutionData sdtElement)
+        {
+            foreach (var sdtElementControl in sdtElement.Controls.ToList())
                 Replace(sdtElementControl, sdtElement.VariableSource);
         }
 
@@ -108,6 +108,7 @@ namespace OpenXMLTemplates.ControlReplacers {
         /// </summary>
         private void Replace(ContentControl control, IVariableSource variableSource) {
             if (!IsEnabled) return;
+            if (control.SdtElement.Parent == null) return;
 
             //Check if it's the correct type of content control
             if (control.Type != ContentControlTypeRestriction &&
@@ -180,13 +181,39 @@ namespace OpenXMLTemplates.ControlReplacers {
             string[] newlineArray = { Environment.NewLine, "\\r\\n", "\\n\\r", "\\n" };
             var textArray = newValue.Split(newlineArray, StringSplitOptions.None);
 
-            var textElement = element.GetTextElement();
-            if (textElement == null) {
+            var texts = element.Descendants<Text>().ToList();
+
+
+            Text textElement = null;
+
+            if (texts.Count > 0)
+            {
+                textElement = texts[0];
+                texts.RemoveAt(0);
+            }
+            else
+            {
                 textElement = new Text();
-                element.Append(new Paragraph(new Run(textElement)));
+
+                var lastRun = element.Descendants<Run>().LastOrDefault();
+                if (lastRun != null)
+                    lastRun.AppendChild(textElement);
+                else
+                {
+                    var lastPar = element.Descendants<Paragraph>().LastOrDefault();
+                    if (lastPar != null)
+                        lastPar.AppendChild(new Run(textElement));
+                    else return;
+                }
+            }
+
+            foreach (var descendant in texts)
+            {
+                descendant.Remove();
             }
 
             var textElementParent = textElement.Parent;
+            textElement.Remove();
 
             var first = true;
 
@@ -194,16 +221,14 @@ namespace OpenXMLTemplates.ControlReplacers {
                 if (!first)
                     textElementParent.Append(new Break());
 
-                textElement.Parent.Append(new Text(line));
+                textElementParent.Append(new Text(line));
 
                 first = false;
             }
 
             //Check if the style is the default placeholder style and remove it if it is
-            if (textElement?.Parent is Run run && run.RunProperties?.RunStyle?.Val == "PlaceholderText")
+            if (textElementParent is Run run && run.RunProperties?.RunStyle?.Val == "PlaceholderText")
                 run.RunProperties.RunStyle.Val = "";
-
-            textElement.Remove();
         }
 
         /// <summary>
