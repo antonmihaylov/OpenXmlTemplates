@@ -1,0 +1,16 @@
+{
+  "name": "Antonio Conte",
+  "address": {
+    "street": "Elm street",
+    "number": 23,
+    "city": {
+      "name": "Novakovo",
+      "province": "Plovdiv"
+    }
+  },
+  "paragraph": "This is a paragraph. \\n This should be a new line \\n\\r This is another new line",
+  "picture1": "test.jpg",
+  "nested": {
+    "puctire1": "test.jpg"
+  }
+}

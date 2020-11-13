@@ -1,10 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Wordprocessing;
+using DocumentFormat.OpenXml.Drawing;
+using DocumentFormat.OpenXml.Packaging;
 using OpenXMLTemplates.Documents;
 using OpenXMLTemplates.Variables;
+using Break = DocumentFormat.OpenXml.Wordprocessing.Break;
+using Paragraph = DocumentFormat.OpenXml.Wordprocessing.Paragraph;
+using Run = DocumentFormat.OpenXml.Wordprocessing.Run;
+using Text = DocumentFormat.OpenXml.Wordprocessing.Text;
 
 namespace OpenXMLTemplates.ControlReplacers
 {
@@ -61,6 +67,8 @@ namespace OpenXMLTemplates.ControlReplacers
         /// <param name="variableSource">The data source for variables</param>
         public void ReplaceAll(TemplateDocument doc, IVariableSource variableSource)
         {
+            //doc.WordprocessingDocument.MainDocumentPart.AddImagePart();
+
             //Enumerate the collections to list in case we add more to the lists while replacing
             Enqueue(ReplacesOnlyFirstOrderChildren
                 ? new ControlReplacementExecutionData(doc.FirstOrderContentControls.ToList(), variableSource)
@@ -115,9 +123,15 @@ namespace OpenXMLTemplates.ControlReplacers
 
             //Process the control and get the value that we should use
             var newValue = ProcessControl(varIdentifier, variableSource, control, otherParameters);
-
-            SetTextAndRemovePlaceholderFormat(control.SdtElement, newValue);
-
+            
+            if (control.Type == OpenXmlExtensions.ContentControlType.Picture)
+            {
+                SetImage(control.SdtElement, newValue, control.TemplateDocument.WordprocessingDocument);
+            }
+            else
+            {
+                SetTextAndRemovePlaceholderFormat(control.SdtElement, newValue);
+            }
 
             OnReplaced(control);
         }
@@ -229,6 +243,33 @@ namespace OpenXMLTemplates.ControlReplacers
             //Check if the style is the default placeholder style and remove it if it is
             if (textElementParent is Run run && run.RunProperties?.RunStyle?.Val == "PlaceholderText")
                 run.RunProperties.RunStyle.Val = "";
+        }
+
+        /// <summary>
+        /// Sets the image content of a PictureContentControl
+        /// </summary>
+        protected static void SetImage(OpenXmlElement element, string newValue, WordprocessingDocument doc)
+        {
+            if (newValue == null)
+                return;
+
+            var imageId = "default value";
+            var blipElement = element.Descendants<Blip>().First();
+            if (blipElement != null)
+                imageId = blipElement.Embed.Value;
+
+            if (blipElement?.Embed == null) 
+                return;
+            
+            var idpp = doc.MainDocumentPart.Parts.FirstOrDefault(pa => pa.RelationshipId == imageId);
+
+            if (idpp == null)
+                return;
+            
+            var ip = (ImagePart) idpp.OpenXmlPart;
+            var bytes = Convert.FromBase64String(newValue);
+            var contents = new MemoryStream(bytes);
+            ip.FeedData(contents);
         }
 
         public void Enqueue(ControlReplacementExecutionData controlReplacementExecutionData)
