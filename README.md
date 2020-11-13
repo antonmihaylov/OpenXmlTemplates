@@ -51,10 +51,10 @@
 
 With the library you can easily:
 * Create word templates using only content controls and their tags
-* Replace the content controls in a template with acutal data from any source (json and a dictionary are natively supported)
+* Replace the content controls in a template with actual data from any source (json and a dictionary are natively supported)
 * Repeat text based on a list (with nested variables and lists)
-* Conditionaly remove text section
-* Specify a singular and a plural word that should be used conditionaly, based of the length of a list
+* Conditionally remove text section
+* Specify a singular and a plural word that should be used conditionally, based of the length of a list
 
 It is server-friendly, because it doesn't require Word installed. Only the Open XML Sdk is used for manipulating the document.
 
@@ -114,7 +114,7 @@ your data and extracts it in a way that the template engine can read it.
     ```
 3. Create an OpenXmlTemplateEngine. A default one is provided (DefaultOpenXmlTemplateEngine). 
 The default one contains all control replacers listed in the readme. You can disable/enable a control replacer by 
-modifying the IsEnabled variable in it. You can also register your own replacer by callin RegisterReplacer on the engine.
+modifying the IsEnabled variable in it. You can also register your own replacer by calling RegisterReplacer on the engine.
     ```c#
         var engine = new DefaultOpenXmlTemplateEngine();
     ```
