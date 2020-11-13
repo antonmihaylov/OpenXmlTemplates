@@ -14,18 +14,16 @@ namespace OpenXMLTemplates.ControlReplacers {
         public override string TagName => "image";
 
         protected override OpenXmlExtensions.ContentControlType ContentControlTypeRestriction =>
-            OpenXmlExtensions.ContentControlType.Undefined;
+            OpenXmlExtensions.ContentControlType.Picture;
 
         protected override string ProcessControl(string variableIdentifier, IVariableSource variableSource,
             ContentControl contentControl, List<string> otherParameters) {
             try {
                 var variable = variableSource.GetVariable(variableIdentifier);
 
-                if (variable == null) return null;
-
-                if (contentControl.Type != OpenXmlExtensions.ContentControlType.Picture)
+                if (variable == null)
                     return null;
-                
+
                 var imagePath = variable.ToString();
                 var byteArray = File.ReadAllBytes(imagePath);
                 return Convert.ToBase64String(byteArray);

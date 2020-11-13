@@ -216,13 +216,22 @@ that the variable names will be relative to the list item. All default content c
  
 ### Conditional dropdown
 
-* Works only with Dropdown content control!
+* Works only with Dropdown content controls!
 * Tag name: "conditional_\<ENTER THE NAME OF YOUR LIST VARIABLE\>"  (the *conditional* keyword is case-insensitive)
 * Replaces the text inside a content control with the appropriate value based on the length of the variable with the provided name
 * If it's evaluated to true (aka is true, "true", 1, "1", non-empty list, non-empty dict) - the first value from the dropdown is used. If it's not - the second value is used.
 * You can use the same extra arguments as in the Conditional remove replacer 
 
  - See example files in the [OpenXmlTemplatesTest/ControlReplacerTests/DropdownControlReplacersTests/ConditionalDropdownControlReplacerTest folder](/OpenXMLTemplatesTest/ControlReplacersTests/DropdownControlReplacersTests/ConditionalDropdownControlReplacerTest)
+
+### Images
+
+* Works only with Image content controls!
+* Tag name: "image_\<ENTER THE NAME OF YOUR VARIABLE\>"  (the *image* keyword is case-insensitive)
+* Put an image path as a variable in your data, the replacer will get the image and will embed it in the Image content control.
+
+ - See example files in the [OpenXmlTemplatesTest/ControlReplacerTests/DropdownControlReplacersTests/PictureControlReplacerTests folder](/OpenXMLTemplatesTest/ControlReplacersTests/DropdownControlReplacersTests/ConditionalDropdownControlReplacerTest)
+
 
 
 <!-- ROADMAP -->
