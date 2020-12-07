@@ -50,16 +50,9 @@ namespace OpenXMLTemplates.ControlReplacers
                         if (lastOperator != null)
                         {
                             object nextValue;
-                            try
-                            {
-                                nextValue = variableSource.GetVariable(otherParameter);
-                            }
-                            catch (VariableNotFoundException)
-                            {
-                                nextValue = otherParameter;
-                            }
+                                nextValue = variableSource.GetVariable(otherParameter) ?? otherParameter;
 
-                            var nextValueEvaluated = EvaluateVariableValue(nextValue);
+                                var nextValueEvaluated = EvaluateVariableValue(nextValue);
 
                             switch (lastOperator)
                             {

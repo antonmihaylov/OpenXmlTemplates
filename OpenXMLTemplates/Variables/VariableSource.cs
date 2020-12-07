@@ -137,8 +137,8 @@ namespace OpenXMLTemplates.Variables
             }
             else
             {
-                if (lastNestedStructure == null) throw new IncorrectIdentifierException(fullIdentifier);
-                if (!lastNestedStructure.Contains(singleIdentifier))
+               
+                if (lastNestedStructure == null || !lastNestedStructure.Contains(singleIdentifier))
                 {
                     if (ThrowIfNotFound) throw new VariableNotFoundException(fullIdentifier);
 
