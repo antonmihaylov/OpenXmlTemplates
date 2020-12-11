@@ -26,8 +26,8 @@ namespace OpenXMLTempaltesTest
 
             Assert.AreEqual("12345", source.GetVariable<string>("phones.[1]"));
 
+            Assert.Throws<VariableNotFoundException>((() => source.GetVariable<string>("name.street")));
             Assert.Throws<VariableNotFoundException>((() => source.GetVariable<string>("address.streeets")));
-            Assert.Throws<IncorrectIdentifierException>((() => source.GetVariable<string>("name.street")));
             Assert.Throws<IncorrectVariableTypeException>((() => source.GetVariable<int>("name")));
         }
     }
