@@ -191,7 +191,7 @@ namespace OpenXMLTemplates.ControlReplacers
             if (newValue == null)
                 return;
 
-            string[] newlineArray = {Environment.NewLine, "\\r\\n", "\\n\\r", "\\n"};
+            string[] newlineArray = {Environment.NewLine, "\r\n", "\n\r", "\n"};
             var textArray = newValue.Split(newlineArray, StringSplitOptions.None);
 
             var texts = element.Descendants<Text>().ToList();
