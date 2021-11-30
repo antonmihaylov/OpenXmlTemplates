@@ -2,7 +2,7 @@
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <RootNamespace>OpenXMLTempaltesTest</RootNamespace>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <FileUpgradeFlags>
         </FileUpgradeFlags>
         <UpgradeBackupLocation>
@@ -10,12 +10,12 @@
         <OldToolsVersion>2.0</OldToolsVersion>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="nunit" Version="3.12.0"/>
-        <PackageReference Include="NUnit3TestAdapter" Version="3.13.0"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0"/>
+        <PackageReference Include="nunit" Version="3.12.0" />
+        <PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\OpenXMLTemplates\OpenXMLTemplates.csproj"/>
+        <ProjectReference Include="..\OpenXMLTemplates\OpenXMLTemplates.csproj" />
     </ItemGroup>
     <ItemGroup>
         <None Update="ControlReplacersTests\PictureControlReplacerTests\data.json">
@@ -104,6 +104,6 @@
         </None>
     </ItemGroup>
     <ItemGroup>
-        <Folder Include="ControlReplacersTests\DropdownControlReplacersTests"/>
+        <Folder Include="ControlReplacersTests\DropdownControlReplacersTests" />
     </ItemGroup>
 </Project>
