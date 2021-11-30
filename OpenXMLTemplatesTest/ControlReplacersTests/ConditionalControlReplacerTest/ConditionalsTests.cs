@@ -32,8 +32,10 @@ namespace OpenXMLTempaltesTest.ControlReplacersTests.
             Assert.NotNull(doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_enabled1_or_enabled2"));
             Assert.NotNull(doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_enabled3_or_enabled2"));
             Assert.IsNull(doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_enabled1_and_enabled2"));
-            Assert.NotNull(doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_enabled1_not_and_enabled2"));
-            Assert.IsNull(doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_enabled2_and_enabled3_not"));
+            Assert.NotNull(
+                doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_enabled1_not_and_enabled2"));
+            Assert.IsNull(
+                doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_enabled2_and_enabled3_not"));
             doc.WordprocessingDocument.AssertValid();
 
             doc.Close();

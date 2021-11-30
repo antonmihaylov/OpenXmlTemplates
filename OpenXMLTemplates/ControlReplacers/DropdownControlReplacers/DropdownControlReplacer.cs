@@ -7,7 +7,7 @@ using OpenXMLTemplates.Variables;
 namespace OpenXMLTemplates.ControlReplacers.DropdownControlReplacers
 {
     /// <summary>
-    /// A Content control replacer that handles dropdown controls
+    ///     A Content control replacer that handles dropdown controls
     /// </summary>
     public abstract class DropdownControlReplacer : ControlReplacer
     {
@@ -15,7 +15,7 @@ namespace OpenXMLTemplates.ControlReplacers.DropdownControlReplacers
             OpenXmlExtensions.ContentControlType.Dropdown;
 
         /// <summary>
-        /// Process a dropdown control, do something with the data and return the value that should get displayed
+        ///     Process a dropdown control, do something with the data and return the value that should get displayed
         /// </summary>
         /// <param name="variableIdentifier">The variable identifier</param>
         /// <param name="variableSource">The source of variable data</param>
@@ -35,7 +35,7 @@ namespace OpenXMLTemplates.ControlReplacers.DropdownControlReplacers
         }
 
         /// <summary>
-        /// Returns either the List item Value or if not set - the Display Text. Returns null if the item is not a List Item
+        ///     Returns either the List item Value or if not set - the Display Text. Returns null if the item is not a List Item
         /// </summary>
         protected static string GetListItemValue(OpenXmlElement element)
         {

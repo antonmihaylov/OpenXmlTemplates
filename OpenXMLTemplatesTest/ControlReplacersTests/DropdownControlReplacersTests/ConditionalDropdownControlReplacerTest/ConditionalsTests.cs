@@ -1,11 +1,8 @@
 using System.IO;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
 using NUnit.Framework;
 using OpenXMLTemplates;
 using OpenXMLTemplates.ControlReplacers.DropdownControlReplacers;
 using OpenXMLTemplates.Documents;
-using OpenXMLTemplates.Utils;
 using OpenXMLTemplates.Variables;
 
 namespace OpenXMLTempaltesTest.ControlReplacersTests.DropdownControlReplacersTests.

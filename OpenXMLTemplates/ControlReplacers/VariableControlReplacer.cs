@@ -6,8 +6,9 @@ using OpenXMLTemplates.Variables.Exceptions;
 namespace OpenXMLTemplates.ControlReplacers
 {
     /// <summary>
-    /// Replaces a controls text with a variable. Control must be annotated with a tag: "variable_&lt;variablename&gt;"
-    /// Complex data types are supported with a rich text field. The inner variable names must be relative to the parent variable
+    ///     Replaces a controls text with a variable. Control must be annotated with a tag: "variable_&lt;variablename&gt;"
+    ///     Complex data types are supported with a rich text field. The inner variable names must be relative to the parent
+    ///     variable
     /// </summary>
     public class VariableControlReplacer : ControlReplacer
     {
@@ -34,8 +35,8 @@ namespace OpenXMLTemplates.ControlReplacers
                 //recursive replacement. For that we will add it to the queue
                 var innerVariableSource = new VariableSource(innerData);
                 Enqueue(new ControlReplacementExecutionData
-                    {Controls = contentControl.DescendingControls, VariableSource = innerVariableSource});
-                
+                    { Controls = contentControl.DescendingControls, VariableSource = innerVariableSource });
+
                 return null;
             }
             catch (VariableNotFoundException)

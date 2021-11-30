@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Text;
-using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 
@@ -39,7 +38,7 @@ namespace OpenXMLTemplates.Utils
         public static T DeserializeXElement<T>(this XElement xElement)
         {
             var xmlSerializer = new XmlSerializer(typeof(T));
-            return (T) xmlSerializer.Deserialize(xElement.CreateReader());
+            return (T)xmlSerializer.Deserialize(xElement.CreateReader());
         }
     }
 }

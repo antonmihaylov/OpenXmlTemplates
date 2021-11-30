@@ -2,71 +2,54 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
 using OpenXMLTemplates.Documents;
 using OpenXMLTemplates.Variables;
 using Break = DocumentFormat.OpenXml.Wordprocessing.Break;
 using Paragraph = DocumentFormat.OpenXml.Wordprocessing.Paragraph;
-using Picture = DocumentFormat.OpenXml.Wordprocessing.Picture;
 using Run = DocumentFormat.OpenXml.Wordprocessing.Run;
 using Text = DocumentFormat.OpenXml.Wordprocessing.Text;
 
-namespace OpenXMLTemplates.ControlReplacers {
+namespace OpenXMLTemplates.ControlReplacers
+{
     /// <summary>
-    /// A base class that handles replacing content controls inside a document with data from a source
+    ///     A base class that handles replacing content controls inside a document with data from a source
     /// </summary>
-    public abstract class ControlReplacer {
-        #region Events
-
-        /// <summary>
-        /// An event that is called whenever a control replacement is enqueued inside another replacement process,
-        /// with an inner set of data. Used for decoupling each control replacer and handling any
-        /// complex cross-control replacement interactivity inside a higher-order class
-        /// </summary>
-        public event EventHandler<ControlReplacementExecutionData> InnerControlReplacementEnqueued;
-
-        /// <summary>
-        /// Called whenever a control is done being replaced
-        /// </summary>
-        public event EventHandler<ContentControl> Replaced;
-
-        #endregion
-
-        public bool IsEnabled { get; set; }
+    public abstract class ControlReplacer
+    {
+        private readonly Queue<ControlReplacementExecutionData> executionQueue;
 
         public bool ReplacesOnlyFirstOrderChildren = false;
 
-
-        /// <summary>
-        /// A tag name that identifies content controls
-        /// </summary>
-        public abstract string TagName { get; }
-
-        /// <summary>
-        /// The allowed content control type for this replacer
-        /// </summary>
-        protected abstract OpenXmlExtensions.ContentControlType ContentControlTypeRestriction { get; }
-
-
-        private Queue<ControlReplacementExecutionData> executionQueue;
-
-        public ControlReplacer() {
+        public ControlReplacer()
+        {
             executionQueue = new Queue<ControlReplacementExecutionData>();
             IsEnabled = true;
         }
 
+        public bool IsEnabled { get; set; }
+
 
         /// <summary>
-        /// Replaces all matching content controls in the template document with the matched data from the VariableSource
+        ///     A tag name that identifies content controls
+        /// </summary>
+        public abstract string TagName { get; }
+
+        /// <summary>
+        ///     The allowed content control type for this replacer
+        /// </summary>
+        protected abstract OpenXmlExtensions.ContentControlType ContentControlTypeRestriction { get; }
+
+
+        /// <summary>
+        ///     Replaces all matching content controls in the template document with the matched data from the VariableSource
         /// </summary>
         /// <param name="doc">The template document</param>
         /// <param name="variableSource">The data source for variables</param>
-        public void ReplaceAll(TemplateDocument doc, IVariableSource variableSource) {
-
+        public void ReplaceAll(TemplateDocument doc, IVariableSource variableSource)
+        {
             //doc.WordprocessingDocument.MainDocumentPart.AddImagePart();
 
             //Enumerate the collections to list in case we add more to the lists while replacing
@@ -76,7 +59,8 @@ namespace OpenXMLTemplates.ControlReplacers {
             ExecuteQueue();
         }
 
-        public void ReplaceAll(IEnumerable<ContentControl> contentControls, IVariableSource variableSource) {
+        public void ReplaceAll(IEnumerable<ContentControl> contentControls, IVariableSource variableSource)
+        {
             Enqueue(ReplacesOnlyFirstOrderChildren
                 ? new ControlReplacementExecutionData(
                     contentControls.Where(c => c.IsFirstOrder).ToList(), variableSource)
@@ -85,14 +69,32 @@ namespace OpenXMLTemplates.ControlReplacers {
             ExecuteQueue();
         }
 
-        public void ExecuteQueue() {
+        public void ExecuteQueue()
+        {
             while (executionQueue.Count > 0)
                 Replace(executionQueue.Dequeue());
         }
 
-        public void ClearQueue() {
+        public void ClearQueue()
+        {
             executionQueue.Clear();
         }
+
+        #region Events
+
+        /// <summary>
+        ///     An event that is called whenever a control replacement is enqueued inside another replacement process,
+        ///     with an inner set of data. Used for decoupling each control replacer and handling any
+        ///     complex cross-control replacement interactivity inside a higher-order class
+        /// </summary>
+        public event EventHandler<ControlReplacementExecutionData> InnerControlReplacementEnqueued;
+
+        /// <summary>
+        ///     Called whenever a control is done being replaced
+        /// </summary>
+        public event EventHandler<ContentControl> Replaced;
+
+        #endregion
 
         #region Private/Protected methods
 
@@ -104,9 +106,10 @@ namespace OpenXMLTemplates.ControlReplacers {
 
 
         /// <summary>
-        /// Replaces the inner text of the content control with a value based on the loaded data from the VariableSource
+        ///     Replaces the inner text of the content control with a value based on the loaded data from the VariableSource
         /// </summary>
-        private void Replace(ContentControl control, IVariableSource variableSource) {
+        private void Replace(ContentControl control, IVariableSource variableSource)
+        {
             if (!IsEnabled) return;
             if (control.SdtElement.Parent == null) return;
 
@@ -119,17 +122,16 @@ namespace OpenXMLTemplates.ControlReplacers {
 
             //Process the control and get the value that we should use
             var newValue = ProcessControl(varIdentifier, variableSource, control, otherParameters);
-            if (control.Type == OpenXmlExtensions.ContentControlType.Picture) {
+            if (control.Type == OpenXmlExtensions.ContentControlType.Picture)
                 SetImage(control.SdtElement, newValue, control.TemplateDocument.WordprocessingDocument);
-            } else {
+            else
                 SetTextAndRemovePlaceholderFormat(control.SdtElement, newValue);
-            }
             OnReplaced(control);
         }
 
 
         /// <summary>
-        /// Process a content control, do something with the data and return the value that should get displayed
+        ///     Process a content control, do something with the data and return the value that should get displayed
         /// </summary>
         /// <param name="variableIdentifier">The variable identifier</param>
         /// <param name="variableSource">The source of variables data. Also available as a class property VariableSource</param>
@@ -142,13 +144,14 @@ namespace OpenXMLTemplates.ControlReplacers {
 
 
         /// <summary>
-        /// Checks if the provided tag is valid and extracts the data from it
+        ///     Checks if the provided tag is valid and extracts the data from it
         /// </summary>
         /// <param name="tag">The full tag that will get inspected</param>
         /// <param name="variableIdentifier">The extracted variable identifier</param>
         /// <param name="otherParameters">Other parameters that are separated by _ after the variable identifier</param>
         /// <returns></returns>
-        private bool ValidateAndExtractTag(string tag, out string variableIdentifier, out List<string> otherParameters) {
+        private bool ValidateAndExtractTag(string tag, out string variableIdentifier, out List<string> otherParameters)
+        {
             variableIdentifier = null;
             otherParameters = new List<string>();
 
@@ -158,11 +161,9 @@ namespace OpenXMLTemplates.ControlReplacers {
             var tagSplit = tag.Split('_');
             if (!string.Equals(tagSplit[0], TagName, StringComparison.CurrentCultureIgnoreCase)) return false;
 
-            if (tagSplit.Length > 2) {
-                for (var i = 2; i < tagSplit.Length; i++) {
+            if (tagSplit.Length > 2)
+                for (var i = 2; i < tagSplit.Length; i++)
                     otherParameters.Add(tagSplit[i]);
-                }
-            }
 
             variableIdentifier = tagSplit[1];
             return true;
@@ -170,11 +171,13 @@ namespace OpenXMLTemplates.ControlReplacers {
 
 
         /// <summary>
-        /// Sets the text of the OpenXmlElement and removes the default placeholder style that is associated by default with content controls.
-        /// If there are new lines (\n, \r\n, \n\r) in the text, it will insert a Break between them.
-        /// If no text element is found, it is created and added as a child of the element
+        ///     Sets the text of the OpenXmlElement and removes the default placeholder style that is associated by default with
+        ///     content controls.
+        ///     If there are new lines (\n, \r\n, \n\r) in the text, it will insert a Break between them.
+        ///     If no text element is found, it is created and added as a child of the element
         /// </summary>
-        protected static void SetTextAndRemovePlaceholderFormat(OpenXmlElement element, string newValue) {
+        protected static void SetTextAndRemovePlaceholderFormat(OpenXmlElement element, string newValue)
+        {
             if (newValue == null)
                 return;
 
@@ -197,7 +200,9 @@ namespace OpenXMLTemplates.ControlReplacers {
 
                 var lastRun = element.Descendants<Run>().LastOrDefault();
                 if (lastRun != null)
+                {
                     lastRun.AppendChild(textElement);
+                }
                 else
                 {
                     var lastPar = element.Descendants<Paragraph>().LastOrDefault();
@@ -207,17 +212,15 @@ namespace OpenXMLTemplates.ControlReplacers {
                 }
             }
 
-            foreach (var descendant in texts)
-            {
-                descendant.Remove();
-            }
+            foreach (var descendant in texts) descendant.Remove();
 
             var textElementParent = textElement.Parent;
             textElement.Remove();
 
             var first = true;
 
-            foreach (var line in textArray) {
+            foreach (var line in textArray)
+            {
                 if (!first)
                     textElementParent.Append(new Break());
 
@@ -232,32 +235,32 @@ namespace OpenXMLTemplates.ControlReplacers {
         }
 
         /// <summary>
-        /// Sets the image content of a PictureContentControl
+        ///     Sets the image content of a PictureContentControl
         /// </summary>
-        protected static void SetImage(OpenXmlElement element, string newValue, WordprocessingDocument doc) {
+        protected static void SetImage(OpenXmlElement element, string newValue, WordprocessingDocument doc)
+        {
             if (newValue == null)
                 return;
-         
-            string imageId = "default value";
-            Blip blipElement = element.Descendants<Blip>().First();
-            if (blipElement != null) {
-                imageId = blipElement.Embed.Value;
-            }
 
-            if (blipElement.Embed != null) {
-                IdPartPair idpp = doc.MainDocumentPart.Parts
-                    .Where(pa => pa.RelationshipId == imageId).FirstOrDefault();
-                if (idpp != null) {
-                    ImagePart ip = (ImagePart)idpp.OpenXmlPart;
+            var imageId = "default value";
+            var blipElement = element.Descendants<Blip>().First();
+            if (blipElement != null) imageId = blipElement.Embed.Value;
+
+            if (blipElement?.Embed != null)
+            {
+                var idpp = doc.MainDocumentPart.Parts.FirstOrDefault(pa => pa.RelationshipId == imageId);
+                if (idpp != null)
+                {
+                    var ip = (ImagePart)idpp.OpenXmlPart;
                     var bytes = Convert.FromBase64String(newValue);
                     var contents = new MemoryStream(bytes);
                     ip.FeedData(contents);
                 }
             }
-     
         }
 
-        public void Enqueue(ControlReplacementExecutionData controlReplacementExecutionData) {
+        public void Enqueue(ControlReplacementExecutionData controlReplacementExecutionData)
+        {
             executionQueue.Enqueue(controlReplacementExecutionData);
         }
 
@@ -266,16 +269,18 @@ namespace OpenXMLTemplates.ControlReplacers {
 
         #region Event Invocators
 
-        protected virtual void OnReplaced(ContentControl e) {
+        protected virtual void OnReplaced(ContentControl e)
+        {
             Replaced?.Invoke(this, e);
         }
 
         /// <summary>
-        /// Call this whenever you enqueue an replacement within another replacement,
-        /// if the data is different, e.g. you use an inner dictionary of the original data as a main data source
+        ///     Call this whenever you enqueue an replacement within another replacement,
+        ///     if the data is different, e.g. you use an inner dictionary of the original data as a main data source
         /// </summary>
         /// <param name="e"></param>
-        protected virtual void OnInnerControlReplacementEnqueued(ControlReplacementExecutionData e) {
+        protected virtual void OnInnerControlReplacementEnqueued(ControlReplacementExecutionData e)
+        {
             InnerControlReplacementEnqueued?.Invoke(this, e);
         }
 

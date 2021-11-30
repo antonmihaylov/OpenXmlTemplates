@@ -10,7 +10,7 @@ namespace OpenXMLTemplates.Utils
     public static class CustomXmlPartExtensions
     {
         /// <summary>
-        /// Returns the Custom XML parts from a Word document
+        ///     Returns the Custom XML parts from a Word document
         /// </summary>
         public static IEnumerable<CustomXmlPart> GetCustomXmlParts(this WordprocessingDocument doc)
         {
@@ -19,8 +19,8 @@ namespace OpenXMLTemplates.Utils
 
 
         /// <summary>
-        /// Returns the first Custom XML part from the document that matches the provided xmlns namespace
-        /// or null if no match is found
+        ///     Returns the first Custom XML part from the document that matches the provided xmlns namespace
+        ///     or null if no match is found
         /// </summary>
         /// <param name="doc">Тhe document where the custom part will be searched</param>
         /// <param name="xmlNamespace">The namespace of the searched custom part</param>
@@ -33,20 +33,26 @@ namespace OpenXMLTemplates.Utils
 
 
         /// <summary>
-        /// Reads the json data and creates a custom XML part with the same parameters.
-        ///
-        /// If a custom XML part with the same namespace exists it is replaced with the new data
-        /// and if it doesn't it is added.
+        ///     Reads the json data and creates a custom XML part with the same parameters.
+        ///     If a custom XML part with the same namespace exists it is replaced with the new data
+        ///     and if it doesn't it is added.
         /// </summary>
         /// <param name="doc">The document that will receive the custom XML part</param>
-        /// <param name="jsonData">The data that will get added in the custom XML part. Must be a valid JSON string with one ore more root elements</param>
-        /// <param name="xmlNamespace">The namespace that will identify the newly created CustomXmlPart. It is also used to determine if it already exists</param>
+        /// <param name="jsonData">
+        ///     The data that will get added in the custom XML part. Must be a valid JSON string with one ore
+        ///     more root elements
+        /// </param>
+        /// <param name="xmlNamespace">
+        ///     The namespace that will identify the newly created CustomXmlPart. It is also used to
+        ///     determine if it already exists
+        /// </param>
         /// <returns>The replaced or newly created CustomXmlPart</returns>
-        public static CustomXmlPart AddOrReplaceCustomXmlPart(this WordprocessingDocument doc, string jsonData, string xmlNamespace)
+        public static CustomXmlPart AddOrReplaceCustomXmlPart(this WordprocessingDocument doc, string jsonData,
+            string xmlNamespace)
         {
-            if(string.IsNullOrWhiteSpace(xmlNamespace))
+            if (string.IsNullOrWhiteSpace(xmlNamespace))
                 throw new XmlNamespaceNotFoundException("Xml namespace not provided");
-            
+
             XDocument xDoc;
             try
             {
@@ -66,17 +72,14 @@ namespace OpenXMLTemplates.Utils
 
             return doc.AddOrReplaceCustomXmlPart(xDoc);
         }
-        
-        
-        
+
+
         /// <summary>
-        /// Reads the json data and creates a custom XML part with the same parameters.
-        ///
-        /// If a custom XML part with the same namespace exists it is replaced with the new data
-        /// and if it doesn't it is added.
-        ///
-        /// The XDocument must have a xmlns namespace, otherwise XmlNamespaceNotFoundException is thrown
-        /// The namespace is used to identify the newly created CustomXmlPart or to find and replace an already existing one
+        ///     Reads the json data and creates a custom XML part with the same parameters.
+        ///     If a custom XML part with the same namespace exists it is replaced with the new data
+        ///     and if it doesn't it is added.
+        ///     The XDocument must have a xmlns namespace, otherwise XmlNamespaceNotFoundException is thrown
+        ///     The namespace is used to identify the newly created CustomXmlPart or to find and replace an already existing one
         /// </summary>
         /// <param name="doc">The document that will receive the custom XML part</param>
         /// <param name="customPart">The XML document that will get added as a custom XML part. It must have a xmlns namespace</param>
@@ -89,14 +92,15 @@ namespace OpenXMLTemplates.Utils
                 throw new XmlNamespaceNotFoundException("Xml namespace not provided in the XDocument");
 
             //Try to get the custom xml part and if nothing is found add it as a custom xml part
-            var ourPart = doc.GetCustomXmlPart(xmlNamespace) ?? doc.MainDocumentPart.AddCustomXmlPart(CustomXmlPartType.CustomXml);
+            var ourPart = doc.GetCustomXmlPart(xmlNamespace) ??
+                          doc.MainDocumentPart.AddCustomXmlPart(CustomXmlPartType.CustomXml);
             ourPart.FeedData(xmlData);
             return ourPart;
         }
 
 
         /// <summary>
-        /// Copies the data from a XDocument to an OpenXmlPart
+        ///     Copies the data from a XDocument to an OpenXmlPart
         /// </summary>
         private static void FeedData(this OpenXmlPart ourPart, XDocument xmlData)
         {

@@ -8,7 +8,7 @@ namespace OpenXMLTempaltesTest
     internal static class TestUtils
     {
         /// <summary>
-        /// Returns the current testing folder
+        ///     Returns the current testing folder
         /// </summary>
         internal static string CurrentFolder(this object testObject)
         {
@@ -17,7 +17,7 @@ namespace OpenXMLTempaltesTest
         }
 
         /// <summary>
-        /// Tests if the document is valid
+        ///     Tests if the document is valid
         /// </summary>
         /// <param name="doc"></param>
         internal static void AssertValid(this WordprocessingDocument doc)
@@ -26,7 +26,7 @@ namespace OpenXMLTempaltesTest
             var errors = validator.Validate(doc.MainDocumentPart).ToList();
             var count = 0;
             foreach (var error in
-                errors)
+                     errors)
             {
                 count++;
                 TestContext.Out.WriteLine("Error " + count);

@@ -28,11 +28,13 @@ namespace OpenXMLTempaltesTest.ControlReplacersTests.RepeatingControlTests
             doc.SaveAs(this.CurrentFolder() + "result.docx");
 
             Assert.AreEqual(4,
-                doc.WordprocessingDocument.ContentControls().Count(cc => cc.GetContentControlTag() != null && cc.GetContentControlTag().StartsWith("repeatingitem")));
+                doc.WordprocessingDocument.ContentControls().Count(cc =>
+                    cc.GetContentControlTag() != null && cc.GetContentControlTag().StartsWith("repeatingitem")));
 
             Assert.AreEqual(5,
-                doc.WordprocessingDocument.ContentControls().Count(cc => cc.GetContentControlTag() != null && cc.GetContentControlTag() == "repeating_nestedList"));
-            
+                doc.WordprocessingDocument.ContentControls().Count(cc =>
+                    cc.GetContentControlTag() != null && cc.GetContentControlTag() == "repeating_nestedList"));
+
             doc.WordprocessingDocument.AssertValid();
         }
     }

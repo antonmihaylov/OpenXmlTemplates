@@ -9,8 +9,6 @@ namespace OpenXMLTempaltesTest.CustomPartAdditionTest
 {
     public class CustomPartAdditionTests
     {
-
-
         [Test]
         public void AddsCustomXmlPart()
         {
@@ -41,7 +39,7 @@ namespace OpenXMLTempaltesTest.CustomPartAdditionTest
             var foundPart = doc.GetCustomXmlPart("XmlCustomPart");
             Assert.IsNotNull(foundPart);
             Assert.DoesNotThrow(() => doc.GetCustomXmlParts().Single(e => e.GetNamespace() == "XmlCustomPart"));
-            
+
             doc.AssertValid();
 
             doc.Close();

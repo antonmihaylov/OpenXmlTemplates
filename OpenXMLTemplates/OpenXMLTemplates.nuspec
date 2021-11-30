@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
-<package >
-  <metadata>
-    <id>$id$</id>
-    <version>$version$</version>
-    <title>$title$</title>
-    <authors>$author$</authors>
-    <owners>$author$</owners>
-    <license type="file">LICENSE.txt</license>
-    <projectUrl>https://github.com/antonmihaylov/OpenXmlTemplates</projectUrl>
-    <icon>icon.png</icon>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$description$</description>
-    <releaseNotes>Initial release</releaseNotes>
-    <copyright>Copyright 2019</copyright>
-    <tags>Word Templates Automation Document OpenXML</tags>
-  </metadata>
+<package>
+    <metadata>
+        <id>$id$</id>
+        <version>$version$</version>
+        <title>$title$</title>
+        <authors>$author$</authors>
+        <owners>$author$</owners>
+        <license type="file">LICENSE.txt</license>
+        <projectUrl>https://github.com/antonmihaylov/OpenXmlTemplates</projectUrl>
+        <icon>icon.png</icon>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>$description$</description>
+        <releaseNotes>Initial release</releaseNotes>
+        <copyright>Copyright 2019</copyright>
+        <tags>Word Templates Automation Document OpenXML</tags>
+    </metadata>
 </package>

@@ -1,31 +1,26 @@
 using System.IO;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
 using NUnit.Framework;
 using OpenXMLTemplates;
 using OpenXMLTemplates.ControlReplacers.DropdownControlReplacers;
 using OpenXMLTemplates.Documents;
-using OpenXMLTemplates.Utils;
 using OpenXMLTemplates.Variables;
 
 namespace OpenXMLTempaltesTest.ControlReplacersTests.DropdownControlReplacersTests.SingularsTest
 {
     public class Tests
     {
-
-
         [Test]
         public void FindsContentControlAndReplacesSingulars()
         {
             var filePath = this.CurrentFolder() + "SingularsTestDoc.docx";
 
-            using var doc =new TemplateDocument(filePath);
+            using var doc = new TemplateDocument(filePath);
 
             var json = File.ReadAllText(this.CurrentFolder() + "TemplatingsTestSingularsData.json");
-            
+
             var src = new VariableSource();
             src.LoadDataFromJson(json);
-            
+
             var singularReplacer = new SingularDropdownControlReplacer();
             singularReplacer.ReplaceAll(doc, src);
 

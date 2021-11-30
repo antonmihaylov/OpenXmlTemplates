@@ -7,21 +7,7 @@ namespace OpenXMLTemplates.Documents
 {
     public class ContentControl
     {
-        public TemplateDocument TemplateDocument { get; private set; }
-        public SdtElement SdtElement { get; internal set; }
-
-        public string Tag { get; private set; }
-
-        public OpenXmlExtensions.ContentControlType Type { get; private set; }
-
-        public bool IsDescendantOfAContentControl { get; private set; }
-        public bool IsFirstOrder => !IsDescendantOfAContentControl;
-
-        public ContentControl Parent { get; internal set; }
-
-
-        private List<ContentControl> descendingControls;
-        public IEnumerable<ContentControl> DescendingControls => descendingControls;
+        private readonly List<ContentControl> descendingControls;
 
 
         public ContentControl(SdtElement sdtElement, TemplateDocument templateDocument = null) : this(sdtElement,
@@ -32,7 +18,7 @@ namespace OpenXMLTemplates.Documents
         public ContentControl(SdtElement sdtElement, bool isDescendantOfAContentControl,
             TemplateDocument templateDocument)
         {
-            if (sdtElement.IsContentControl() == false)
+            if (!sdtElement.IsContentControl())
                 throw new ArgumentException("The provided SdtElement is not a content control", nameof(sdtElement));
 
             TemplateDocument = templateDocument;
@@ -44,10 +30,23 @@ namespace OpenXMLTemplates.Documents
             descendingControls = new List<ContentControl>();
         }
 
+        public TemplateDocument TemplateDocument { get; }
+        public SdtElement SdtElement { get; internal set; }
+
+        public string Tag { get; }
+
+        public OpenXmlExtensions.ContentControlType Type { get; }
+
+        public bool IsDescendantOfAContentControl { get; }
+        public bool IsFirstOrder => !IsDescendantOfAContentControl;
+
+        public ContentControl Parent { get; internal set; }
+        public IEnumerable<ContentControl> DescendingControls => descendingControls;
+
         internal void AddDescendingControl(ContentControl control)
         {
             descendingControls.Add(control);
-            if (TemplateDocument != null && TemplateDocument.AllContentControls.Contains(control) == false)
+            if (TemplateDocument != null && !TemplateDocument.AllContentControls.Contains(control))
                 TemplateDocument.AddControl(control, false);
         }
 
@@ -57,7 +56,7 @@ namespace OpenXMLTemplates.Documents
             descendingControls.Clear();
             foreach (var descendant in SdtElement.ContentControls())
             {
-                var descCon = new ContentControl(descendant, true, TemplateDocument) {Parent = this};
+                var descCon = new ContentControl(descendant, true, TemplateDocument) { Parent = this };
                 descCon.GenerateDescendantsFromChildren();
                 AddDescendingControl(descCon);
             }

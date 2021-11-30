@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -8,33 +7,22 @@ using OpenXMLTemplates.Variables.Exceptions;
 
 namespace OpenXMLTemplates.Variables
 {
-    /// <summary>
-    /// Parses a variable identifier and extracts an item from a collection based on it.
-    ///
-    /// Allowed patterns:
-    ///    - Simple variable identifier - pointing to the name of the property (e.g. "name")
-    ///    - Nested variable identifier - pointing to a property of a property (e.g. "address.street")
-    ///    - Array index identifier - pointing to an array item at a specified index (e.g. "customers[1]")
-    /// </summary>
-    /// <example>
-    /// For example:
-    ///     Variable Identifier:                        Data:                           Extracted value:
-    ///     - name                                - { name: "Ivar" }                    - "Ivar"
-    ///     - address.street               - { address: {street: "Jumpstreet"}}         - "Jumpstreet"
-    ///     - customers[1]                 - { customers: ["Ivar", "Rick"]}             - "Rick"
-    /// </example>
-    public class VariableSource : IVariableSource
+	/// <summary>
+	///     Parses a variable identifier and extracts an item from a collection based on it.
+	///     Allowed patterns:
+	///     - Simple variable identifier - pointing to the name of the property (e.g. "name")
+	///     - Nested variable identifier - pointing to a property of a property (e.g. "address.street")
+	///     - Array index identifier - pointing to an array item at a specified index (e.g. "customers[1]")
+	/// </summary>
+	/// <example>
+	///     For example:
+	///     Variable Identifier:                        Data:                           Extracted value:
+	///     - name                                - { name: "Ivar" }                    - "Ivar"
+	///     - address.street               - { address: {street: "Jumpstreet"}}         - "Jumpstreet"
+	///     - customers[1]                 - { customers: ["Ivar", "Rick"]}             - "Rick"
+	/// </example>
+	public class VariableSource : IVariableSource
     {
-        /// <summary>
-        /// The data that this variable source uses
-        /// </summary>
-        public IDictionary Data { get; set; }
-
-        /// <summary>
-        /// Weather to not throw a VariableNotFoundException if no match is found. Default is to throw
-        /// </summary>
-        public bool ThrowIfNotFound { get; set; }
-
         public VariableSource()
         {
             ThrowIfNotFound = true;
@@ -42,26 +30,36 @@ namespace OpenXMLTemplates.Variables
 
         public VariableSource(IDictionary dataSource) : this()
         {
-            this.Data = dataSource;
+            Data = dataSource;
         }
 
         public VariableSource(string json) : this()
         {
-            this.LoadDataFromJson(json);
+            LoadDataFromJson(json);
         }
-        
-        
 
         /// <summary>
-        /// Parses the variable identifier and returns the corresponding value from the currently loaded data.
-        ///
-        /// If no data is loaded null is returned.
-        ///
-        /// If the variable does not match the provided type T IncorrectVariableTypeException is thrown.
+        ///     The data that this variable source uses
+        /// </summary>
+        public IDictionary Data { get; set; }
+
+        /// <summary>
+        ///     Weather to not throw a VariableNotFoundException if no match is found. Default is to throw
+        /// </summary>
+        public bool ThrowIfNotFound { get; set; }
+
+
+        /// <summary>
+        ///     Parses the variable identifier and returns the corresponding value from the currently loaded data.
+        ///     If no data is loaded null is returned.
+        ///     If the variable does not match the provided type T IncorrectVariableTypeException is thrown.
         /// </summary>
         /// <param name="variabeIdentifier">The variable identifier</param>
         /// <typeparam name="T">The type of the searched variable. If it doesn't match IncorrectVariableTypeException is thrown</typeparam>
-        /// <returns>The found variable value or null if there is no data loaded or the variable is not found (in case throwIfNotFound is false)</returns>
+        /// <returns>
+        ///     The found variable value or null if there is no data loaded or the variable is not found (in case
+        ///     throwIfNotFound is false)
+        /// </returns>
         /// <exception cref="IncorrectVariableTypeException"></exception>
         public T GetVariable<T>(string variabeIdentifier)
         {
@@ -69,7 +67,7 @@ namespace OpenXMLTemplates.Variables
 
             if (lastValue == default)
                 return default;
-            
+
             if (!(lastValue is T casted))
                 throw new IncorrectVariableTypeException(variabeIdentifier, lastValue.GetType(), typeof(T));
 
@@ -78,12 +76,15 @@ namespace OpenXMLTemplates.Variables
 
 
         /// <summary>
-        /// Parses the variable identifier and returns the corresponding value from the currently loaded data.
-        /// If no data is loaded null is returned.
+        ///     Parses the variable identifier and returns the corresponding value from the currently loaded data.
+        ///     If no data is loaded null is returned.
         /// </summary>
         /// <param name="variabeIdentifier">The variable identifier</param>
         /// <param name="allowNull">If this is false and the value is null an IncorrectIdentifierException exception is thrown</param>
-        /// <returns>The found variable value or null if there is no data loaded or the variable is not found (in case throwIfNotFound is false)</returns>
+        /// <returns>
+        ///     The found variable value or null if there is no data loaded or the variable is not found (in case
+        ///     throwIfNotFound is false)
+        /// </returns>
         /// <exception cref="IncorrectVariableTypeException"></exception>
         public virtual object GetVariable(string variabeIdentifier)
         {
@@ -97,125 +98,115 @@ namespace OpenXMLTemplates.Variables
 
             var formatStr = GetStringFormatter(variabeIdentifier);
             foreach (var id in identifierSplittedByDot)
-            {
                 if (ParseVariableIdentifier(variabeIdentifier, id,
-                    ref lastList, ref lastNestedStructure, ref lastValue, out var variableFromDictionary))
+                        ref lastList, ref lastNestedStructure, ref lastValue, out var variableFromDictionary))
                     return variableFromDictionary;
-            }
 
-            return string.IsNullOrEmpty(formatStr) ? lastValue : (lastValue == null ? "" : decimal.Parse(lastValue.ToString()).ToString(formatStr));
+            return string.IsNullOrEmpty(formatStr) ? lastValue :
+                lastValue == null ? "" : decimal.Parse(lastValue.ToString()).ToString(formatStr);
         }
 
 
         /// <summary>
-        /// Assign variableFromDictionary and return true if the variable is found.
+        ///     Assign variableFromDictionary and return true if the variable is found.
         /// </summary>
         protected virtual bool ParseVariableIdentifier(string fullIdentifier, string singleIdentifier,
             ref IList lastList, ref IDictionary lastNestedStructure, ref object lastValue,
             out object variableFromDictionary)
-		{
-			object found;
-			string numFormatStr = GetStringFormatter(singleIdentifier);
-
-			if (!string.IsNullOrEmpty(numFormatStr))
-			{
-                var replaceStr = $"({numFormatStr})";
-				singleIdentifier = singleIdentifier.Replace(replaceStr, string.Empty);
-                fullIdentifier = fullIdentifier.Replace(replaceStr, string.Empty);
-			}
-
-			if (singleIdentifier.Contains("[") && singleIdentifier.Contains("]"))
-			{
-				if (lastList == null)
-					throw new IncorrectIdentifierException(fullIdentifier,
-						"A list item identifier was provided, but not list was found");
-				try
-				{
-					var listIndexIdentifier = int.Parse(singleIdentifier.Replace("[", "").Replace("]", ""));
-
-					if (listIndexIdentifier >= lastList.Count)
-						throw new IncorrectIdentifierException(fullIdentifier,
-							"A list data structure is found, but the identifier specifies an index that is out of bounds for this collection");
-
-					found = lastList[listIndexIdentifier];
-				}
-				catch
-				{
-					throw new IncorrectIdentifierException(fullIdentifier,
-						"A List data structure is found, but the identifier doesn't match the correct pattern for a list identifier. The correct pattern is '...identifier[n]...'");
-				}
-			}
-			else
-			{
-
-				if (lastNestedStructure == null || !lastNestedStructure.Contains(singleIdentifier))
-				{
-					if (ThrowIfNotFound) throw new VariableNotFoundException(fullIdentifier);
-
-					variableFromDictionary = default;
-					return true;
-				}
-
-				found = lastNestedStructure[singleIdentifier];
-			}
-
-
-			if (found is IDictionary dictionary)
-				lastNestedStructure = dictionary;
-			else
-			{
-				lastNestedStructure = null;
-
-				if (found is IList collection)
-				{
-					lastList = collection;
-				}
-			}
-
-			lastValue = found;
-			variableFromDictionary = null;
-			return false;
-		}
-
-		private static string GetStringFormatter(string fullIdentifier)
-		{
-			var regex = new Regex(@"(\(\w+\))", RegexOptions.IgnoreCase);
-			var numFormatStr = regex.Match(fullIdentifier).Value;
-			return numFormatStr.Trim('(',')');
-		}
-
-
-
-
-		/// <summary>
-		/// Sets the data that will be used for extracting
-		/// </summary>
-		public void LoadDataFromDictionary(IDictionary dictionary)
         {
-            this.Data = dictionary;
+            object found;
+            var numFormatStr = GetStringFormatter(singleIdentifier);
+
+            if (!string.IsNullOrEmpty(numFormatStr))
+            {
+                var replaceStr = $"({numFormatStr})";
+                singleIdentifier = singleIdentifier.Replace(replaceStr, string.Empty);
+                fullIdentifier = fullIdentifier.Replace(replaceStr, string.Empty);
+            }
+
+            if (singleIdentifier.Contains("[") && singleIdentifier.Contains("]"))
+            {
+                if (lastList == null)
+                    throw new IncorrectIdentifierException(fullIdentifier,
+                        "A list item identifier was provided, but not list was found");
+                try
+                {
+                    var listIndexIdentifier = int.Parse(singleIdentifier.Replace("[", "").Replace("]", ""));
+
+                    if (listIndexIdentifier >= lastList.Count)
+                        throw new IncorrectIdentifierException(fullIdentifier,
+                            "A list data structure is found, but the identifier specifies an index that is out of bounds for this collection");
+
+                    found = lastList[listIndexIdentifier];
+                }
+                catch
+                {
+                    throw new IncorrectIdentifierException(fullIdentifier,
+                        "A List data structure is found, but the identifier doesn't match the correct pattern for a list identifier. The correct pattern is '...identifier[n]...'");
+                }
+            }
+            else
+            {
+                if (lastNestedStructure == null || !lastNestedStructure.Contains(singleIdentifier))
+                {
+                    if (ThrowIfNotFound) throw new VariableNotFoundException(fullIdentifier);
+
+                    variableFromDictionary = default;
+                    return true;
+                }
+
+                found = lastNestedStructure[singleIdentifier];
+            }
+
+
+            if (found is IDictionary dictionary)
+            {
+                lastNestedStructure = dictionary;
+            }
+            else
+            {
+                lastNestedStructure = null;
+
+                if (found is IList collection) lastList = collection;
+            }
+
+            lastValue = found;
+            variableFromDictionary = null;
+            return false;
+        }
+
+        private static string GetStringFormatter(string fullIdentifier)
+        {
+            var regex = new Regex(@"(\(\w+\))", RegexOptions.IgnoreCase);
+            var numFormatStr = regex.Match(fullIdentifier).Value;
+            return numFormatStr.Trim('(', ')');
         }
 
 
         /// <summary>
-        /// Sets the data that will be used for extracting
+        ///     Sets the data that will be used for extracting
+        /// </summary>
+        public void LoadDataFromDictionary(IDictionary dictionary)
+        {
+            Data = dictionary;
+        }
+
+
+        /// <summary>
+        ///     Sets the data that will be used for extracting
         /// </summary>
         public void LoadDataFromJson(string json)
         {
             var deserialized = DeserializeJsonToObject(json);
             if (deserialized is IDictionary dictionary)
-                this.Data = dictionary;
+                Data = dictionary;
             else throw new JsonException("The provided JSON string must be a JSON object and not an array");
         }
 
-        
-        
-        
-        
-        
 
         /// <summary>
-        /// Converts a JSON string to either a Dictionary of child items (If it is a JSON Object),
-        /// a List (If it is a JSON Array) or the value (if it is a property)
+        ///     Converts a JSON string to either a Dictionary of child items (If it is a JSON Object),
+        ///     a List (If it is a JSON Array) or the value (if it is a property)
         /// </summary>
         public object DeserializeJsonToObject(string json)
         {
@@ -223,8 +214,8 @@ namespace OpenXMLTemplates.Variables
         }
 
         /// <summary>
-        /// Converts a JToken to either a Dictionary of child items (If it is a JSON Object),
-        /// a List (If it is a JSON Array) or the value (if it is a property)
+        ///     Converts a JToken to either a Dictionary of child items (If it is a JSON Object),
+        ///     a List (If it is a JSON Array) or the value (if it is a property)
         /// </summary>
         private static object ToObject(JToken token)
         {
@@ -233,7 +224,7 @@ namespace OpenXMLTemplates.Variables
                 JTokenType.Object => token.Children<JProperty>()
                     .ToDictionary(prop => prop.Name, prop => ToObject(prop.Value)),
                 JTokenType.Array => token.Select(ToObject).ToList(),
-                _ => ((JValue) token).Value
+                _ => ((JValue)token).Value
             };
         }
     }

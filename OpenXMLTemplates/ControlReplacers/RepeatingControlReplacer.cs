@@ -11,17 +11,17 @@ using OpenXMLTemplates.Variables.Exceptions;
 namespace OpenXMLTemplates.ControlReplacers
 {
     /// <summary>
-    /// Repeats the content control as many times as there are items in the variable identified by the provided variable name.
-    /// In order for a control to be recognized as a repeating it must be tagged as "repeating_variableidentifier"
-    /// 
-    /// Complex fields with inner content controls are supported. Annotate the inner fields with a tag such as: repeatingitem_variableidentifier
-    /// Here the variable identifier is relative to the inner repeating item.
-    /// Use a variable with identifier "index" to insert the index of the current item (starting from 1)
-    ///
-    /// E.g. with data: items: [{name: ".."}], the inner tag would be repeatingitem_name
-    /// Can have extra arguments such as:
-    ///    - separator_* : inserts a separator (*) after each item
-    ///    - lastSeparator_*: inserts a special separator before the last item
+    ///     Repeats the content control as many times as there are items in the variable identified by the provided variable
+    ///     name.
+    ///     In order for a control to be recognized as a repeating it must be tagged as "repeating_variableidentifier"
+    ///     Complex fields with inner content controls are supported. Annotate the inner fields with a tag such as:
+    ///     repeatingitem_variableidentifier
+    ///     Here the variable identifier is relative to the inner repeating item.
+    ///     Use a variable with identifier "index" to insert the index of the current item (starting from 1)
+    ///     E.g. with data: items: [{name: ".."}], the inner tag would be repeatingitem_name
+    ///     Can have extra arguments such as:
+    ///     - separator_* : inserts a separator (*) after each item
+    ///     - lastSeparator_*: inserts a special separator before the last item
     /// </summary>
     public class RepeatingControlReplacer : ControlReplacer
     {
@@ -67,12 +67,12 @@ namespace OpenXMLTemplates.ControlReplacers
                         {
                             if (dictItem.ContainsKey("index") == false)
                                 dictItem.Add("index", i + 1);
-                            
+
                             //Since we are creating new elements, we should add them to the queue with both this and the inner data
                             var innerSource = new VariableSource(dictItem);
                             var exInner = new ControlReplacementExecutionData(clone.DescendingControls, innerSource);
                             var ex = new ControlReplacementExecutionData(clone.DescendingControls, variableSource);
-                            
+
                             Enqueue(exInner);
                             OnInnerControlReplacementEnqueued(ex);
                             OnInnerControlReplacementEnqueued(exInner);
@@ -92,10 +92,11 @@ namespace OpenXMLTemplates.ControlReplacers
                     if (lasttext != null)
                     {
                         if (i < dataItems.Count - 2)
-                            lasttext.InsertAfterSelf(new Text(separator) {Space = SpaceProcessingModeValues.Preserve});
+                            lasttext.InsertAfterSelf(new Text(separator)
+                                { Space = SpaceProcessingModeValues.Preserve });
                         else if (i < dataItems.Count - 1)
                             lasttext.InsertAfterSelf(new Text(lastSeparator)
-                                {Space = SpaceProcessingModeValues.Preserve});
+                                { Space = SpaceProcessingModeValues.Preserve });
                     }
                 }
 
@@ -242,7 +243,7 @@ namespace OpenXMLTemplates.ControlReplacers
         {
             return original.GetFirstChild<SdtContentRun>() ??
                    original.GetFirstChild<SdtContentBlock>() ??
-                   (OpenXmlElement) original.GetFirstChild<SdtContentRow>();
+                   (OpenXmlElement)original.GetFirstChild<SdtContentRow>();
         }
 
 

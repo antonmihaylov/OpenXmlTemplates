@@ -6,9 +6,9 @@ namespace OpenXMLTemplates.Utils
 {
     public static class WordFileUtils
     {
-        private static readonly OpenSettings DefaultOpenSettings = new OpenSettings()
+        private static readonly OpenSettings DefaultOpenSettings = new OpenSettings
         {
-            AutoSave = false,
+            AutoSave = false
             //MarkupCompatibilityProcessSettings = 
             //    new MarkupCompatibilityProcessSettings(
             //        MarkupCompatibilityProcessMode.ProcessAllParts, 
@@ -17,7 +17,7 @@ namespace OpenXMLTemplates.Utils
 
 
         /// <summary>
-        /// Opens a word file by using the default settings.
+        ///     Opens a word file by using the default settings.
         /// </summary>
         /// <param name="path">The word file path</param>
         public static WordprocessingDocument OpenFile(string path)
@@ -27,7 +27,7 @@ namespace OpenXMLTemplates.Utils
 
 
         /// <summary>
-        /// Opens a word file by using provided settings.
+        ///     Opens a word file by using provided settings.
         /// </summary>
         /// <param name="path">The word file path</param>
         /// <param name="openSettings">Settings when opening a document</param>

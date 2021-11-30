@@ -5,11 +5,11 @@ using OpenXMLTemplates.Variables;
 
 namespace OpenXMLTemplates.ControlReplacers.DropdownControlReplacers
 {
-
     /// <summary>
-    /// Replaces all dropdown content controls marked as plural with the appropriate value based on the length of the variable 
-    /// The first list item in the dropdown is the singular value and the second one the plural
-    /// For a dropdown to be recognized as plural it needs to have a tag name as  follows "singular_variableidentifier"
+    ///     Replaces all dropdown content controls marked as plural with the appropriate value based on the length of the
+    ///     variable
+    ///     The first list item in the dropdown is the singular value and the second one the plural
+    ///     For a dropdown to be recognized as plural it needs to have a tag name as  follows "singular_variableidentifier"
     /// </summary>
     public class SingularDropdownControlReplacer : DropdownControlReplacer
     {

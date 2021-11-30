@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using DocumentFormat.OpenXml.Wordprocessing;
 using OpenXMLTemplates.Documents;
 using OpenXMLTemplates.Variables;
 

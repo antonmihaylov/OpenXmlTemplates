@@ -6,7 +6,6 @@ using System.Xml;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
-using OpenXMLTemplates.Documents;
 
 namespace OpenXMLTemplates
 {
@@ -24,8 +23,18 @@ namespace OpenXMLTemplates
 
     public static class OpenXmlExtensions
     {
+        public enum ContentControlType
+        {
+            Undefined,
+            RichText,
+            PlainText,
+            Picture,
+            Dropdown,
+            Other
+        }
+
         /// <summary>
-        /// Returns the xmlns namespace of the open xml part
+        ///     Returns the xmlns namespace of the open xml part
         /// </summary>
         public static string GetNamespace(this OpenXmlPart xmlPart)
         {
@@ -35,7 +44,7 @@ namespace OpenXMLTemplates
         }
 
         /// <summary>
-        /// Attempts to set the Text value of the Text element. If no Text tag is found, nothing is set
+        ///     Attempts to set the Text value of the Text element. If no Text tag is found, nothing is set
         /// </summary>
         public static Text SetText(this OpenXmlElement sdtElement, string newValue)
         {
@@ -71,7 +80,7 @@ namespace OpenXMLTemplates
         }
 
         /// <summary>
-        /// Returns the first descending text element or null if not found
+        ///     Returns the first descending text element or null if not found
         /// </summary>
         public static Text GetTextElement(this OpenXmlElement element)
         {
@@ -79,7 +88,7 @@ namespace OpenXMLTemplates
         }
 
         /// <summary>
-        /// Finds a content control within this OpenXmlPart by its tag name
+        ///     Finds a content control within this OpenXmlPart by its tag name
         /// </summary>
         public static SdtElement FindContentControl(this OpenXmlPart part, string tagName)
         {
@@ -89,7 +98,7 @@ namespace OpenXMLTemplates
         }
 
         /// <summary>
-        /// Finds a content control within this document by its tag name
+        ///     Finds a content control within this document by its tag name
         /// </summary>
         public static SdtElement FindContentControl(this WordprocessingDocument doc, string tagName)
         {
@@ -99,7 +108,7 @@ namespace OpenXMLTemplates
         }
 
         /// <summary>
-        /// Findss all content controls within this document by their tag name
+        ///     Findss all content controls within this document by their tag name
         /// </summary>
         public static IEnumerable<SdtElement> FindContentControls(this WordprocessingDocument doc, string tagName)
         {
@@ -110,7 +119,7 @@ namespace OpenXMLTemplates
 
 
         /// <summary>
-        /// Finds the tag of a content control
+        ///     Finds the tag of a content control
         /// </summary>
         public static string GetContentControlTag(this SdtElement sdtElement)
         {
@@ -120,7 +129,7 @@ namespace OpenXMLTemplates
         }
 
         /// <summary>
-        /// Verifies if this element is a content control
+        ///     Verifies if this element is a content control
         /// </summary>
         public static bool IsContentControl(this OpenXmlElement e)
         {
@@ -129,7 +138,7 @@ namespace OpenXMLTemplates
 
 
         /// <summary>
-        /// Verifies if this element is a descendant of a content control anywhere up the line
+        ///     Verifies if this element is a descendant of a content control anywhere up the line
         /// </summary>
         public static bool IsDescendantOfAContentControl(this OpenXmlElement e, out SdtElement contentControlParent)
         {
@@ -138,7 +147,7 @@ namespace OpenXMLTemplates
             {
                 if (parent.IsContentControl())
                 {
-                    contentControlParent = (SdtElement) parent;
+                    contentControlParent = (SdtElement)parent;
                     return true;
                 }
 
@@ -150,7 +159,7 @@ namespace OpenXMLTemplates
         }
 
         /// <summary>
-        /// Verifies if this element is a descendant of a content control anywhere up the line
+        ///     Verifies if this element is a descendant of a content control anywhere up the line
         /// </summary>
         public static bool IsDescendantOfAContentControl(this OpenXmlElement e)
         {
@@ -159,7 +168,7 @@ namespace OpenXMLTemplates
 
 
         /// <summary>
-        /// Finds all content controls of this OpenXmlPart
+        ///     Finds all content controls of this OpenXmlPart
         /// </summary>
         public static IEnumerable<SdtElement> ContentControls(
             this OpenXmlPart part)
@@ -169,7 +178,7 @@ namespace OpenXMLTemplates
 
 
         /// <summary>
-        /// Finds all content controls of this OpenXmlElement
+        ///     Finds all content controls of this OpenXmlElement
         /// </summary>
         public static IEnumerable<SdtElement> ContentControls(this OpenXmlElement element)
         {
@@ -178,7 +187,7 @@ namespace OpenXMLTemplates
         }
 
         /// <summary>
-        /// Finds all content controls of this document
+        ///     Finds all content controls of this document
         /// </summary>
         public static IEnumerable<SdtElement> ContentControls(
             this WordprocessingDocument doc)
@@ -186,32 +195,29 @@ namespace OpenXMLTemplates
             foreach (var cc in doc.MainDocumentPart.ContentControls())
                 yield return cc;
             foreach (var header in doc.MainDocumentPart.HeaderParts)
-            foreach (var cc in header.ContentControls())
-                yield return cc;
+            {
+                foreach (var cc in header.ContentControls())
+                    yield return cc;
+            }
+
             foreach (var footer in doc.MainDocumentPart.FooterParts)
-            foreach (var cc in footer.ContentControls())
-                yield return cc;
+            {
+                foreach (var cc in footer.ContentControls())
+                    yield return cc;
+            }
+
             if (doc.MainDocumentPart.FootnotesPart != null)
                 foreach (var cc in doc.MainDocumentPart.FootnotesPart.ContentControls())
                     yield return cc;
+            
             if (doc.MainDocumentPart.EndnotesPart != null)
                 foreach (var cc in doc.MainDocumentPart.EndnotesPart.ContentControls())
                     yield return cc;
         }
 
-        public enum ContentControlType
-        {
-            Undefined,
-            RichText,
-            PlainText,
-            Picture,
-            Dropdown,
-            Other
-        }
-
         /// <summary>
-        /// Gets the type of this content control
-        /// TODO add support for more types
+        ///     Gets the type of this content control
+        ///     TODO add support for more types
         /// </summary>
         public static ContentControlType GetContentControlType(this SdtElement sdtElement)
         {
@@ -234,17 +240,15 @@ namespace OpenXMLTemplates
                 || sdtElement.SdtProperties.GetFirstChild<SdtContentCitation>() != null
                 || sdtElement.SdtProperties.GetFirstChild<SdtContentGroup>() != null
                 || sdtElement.SdtProperties.GetFirstChild<SdtContentBibliography>() != null
-            )
-            {
+               )
                 return ContentControlType.Other;
-            }
 
             return ContentControlType.RichText;
         }
 
 
         /// <summary>
-        /// Enumerates all of the descendants of the element using breadth first algorithm
+        ///     Enumerates all of the descendants of the element using breadth first algorithm
         /// </summary>
         /// <param name="element"></param>
         public static IEnumerable<OpenXmlElement> DescendantsBreadthFirst(this OpenXmlElement element)
@@ -253,7 +257,7 @@ namespace OpenXMLTemplates
         }
 
         /// <summary>
-        /// Enumerates all of the descendants of the element using breadth first algorithm
+        ///     Enumerates all of the descendants of the element using breadth first algorithm
         /// </summary>
         /// <param name="element"></param>
         public static IEnumerable<T> DescendantsBreadthFirst<T>(this OpenXmlElement element)
@@ -277,6 +281,5 @@ namespace OpenXMLTemplates
                 }
             }
         }
-    
     }
 }

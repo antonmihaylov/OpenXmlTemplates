@@ -1,4 +1,9 @@
 {
-  "sellers": ["John", "Peter"],
-  "buyers": ["Mario"]
+  "sellers": [
+    "John",
+    "Peter"
+  ],
+  "buyers": [
+    "Mario"
+  ]
 }

@@ -8,7 +8,6 @@ namespace OpenXMLTempaltesTest.XMLReplacementTest
 {
     public class XmlReplacementTests
     {
-
         private WordprocessingDocument GetDoc()
         {
             return WordFileUtils.OpenFile(this.CurrentFolder() + "XMLReplacementTestDoc.docx");
@@ -18,7 +17,7 @@ namespace OpenXMLTempaltesTest.XMLReplacementTest
         public void ReplacesXmlUsingJson()
         {
             using var doc = GetDoc();
-            
+
             var json = File.ReadAllText(this.CurrentFolder() + "XMLReplacement.json");
 
             doc.AddOrReplaceCustomXmlPart(json, "XMLReplacementTest");
@@ -26,7 +25,6 @@ namespace OpenXMLTempaltesTest.XMLReplacementTest
 
 //            doc.SaveAs(TestContext.CurrentContext.TestDirectory + "/XMLReplacementTest/result.docx");
             doc.Close();
-
         }
 
         [Test]

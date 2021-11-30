@@ -8,34 +8,19 @@ using OpenXMLTemplates.Utils;
 namespace OpenXMLTemplates.Documents
 {
     /// <summary>
-    /// Represents a word document that is used as a template.
-    /// Don't forget to dispose it after usage (or call Close)
+    ///     Represents a word document that is used as a template.
+    ///     Don't forget to dispose it after usage (or call Close)
     /// </summary>
     public class TemplateDocument : IDisposable
     {
-        public WordprocessingDocument WordprocessingDocument { get; private set; }
-
         private readonly List<ContentControl> allContentControls;
-
-        /// <summary>
-        /// All content controls in the document
-        /// </summary>
-        public IEnumerable<ContentControl> AllContentControls => allContentControls;
 
         private readonly List<ContentControl> firstOrderContentControls;
 
-
         /// <summary>
-        /// All content controls that have no parent content controls anywhere on the line up
-        /// </summary>
-        public IEnumerable<ContentControl> FirstOrderContentControls => firstOrderContentControls;
-
-        /// <summary>
-        /// All content controls in the document that have a parent somewhere up the line that is a content control
+        ///     All content controls in the document that have a parent somewhere up the line that is a content control
         /// </summary>
         private readonly List<ContentControl> innerContentControls;
-
-        public IEnumerable<ContentControl> InnerContentControls => innerContentControls;
 
         public TemplateDocument(string filePath) : this(WordFileUtils.OpenFile(filePath))
         {
@@ -51,7 +36,6 @@ namespace OpenXMLTemplates.Documents
             allContentControls = new List<ContentControl>();
 
             foreach (var sdtElement in sdtElements)
-            {
                 if (sdtElement.IsDescendantOfAContentControl(out var parentSdtElement))
                 {
                     //Find the parent content control for that element
@@ -61,7 +45,9 @@ namespace OpenXMLTemplates.Documents
                     innerContentControls.Add(cc);
 
                     if (contentControlParent == null)
+                    {
                         Console.WriteLine("Warning. Content control parent not found for element that should have one");
+                    }
                     else
                     {
                         cc.Parent = contentControlParent;
@@ -74,20 +60,28 @@ namespace OpenXMLTemplates.Documents
                     firstOrderContentControls.Add(cc);
                     allContentControls.Add(cc);
                 }
-            }
         }
 
+        public WordprocessingDocument WordprocessingDocument { get; }
 
-        public IEnumerable<ContentControl> GetContentControls()
-        {
-            // return contentControls;
-            return null;
-        }
+        /// <summary>
+        ///     All content controls in the document
+        /// </summary>
+        public IEnumerable<ContentControl> AllContentControls => allContentControls;
+
+
+        /// <summary>
+        ///     All content controls that have no parent content controls anywhere on the line up
+        /// </summary>
+        public IEnumerable<ContentControl> FirstOrderContentControls => firstOrderContentControls;
+
+        public IEnumerable<ContentControl> InnerContentControls => innerContentControls;
 
         public void Dispose()
         {
             WordprocessingDocument?.Dispose();
         }
+
 
         public void Close(bool save = false)
         {
@@ -126,15 +120,13 @@ namespace OpenXMLTemplates.Documents
                 var contentElement = sdtElement.Descendants()
                     .FirstOrDefault(d => d is SdtContentBlock || d is SdtContentRun);
                 if (contentElement != null)
-                {
                     foreach (var contentElementChildElement in contentElement.ChildElements.ToList())
                     {
                         contentElementChildElement.Remove();
                         sdtElement.InsertBeforeSelf(contentElementChildElement);
                     }
-                }
             }
-            
+
             allContentControls.Clear();
             innerContentControls.Clear();
             firstOrderContentControls.Clear();

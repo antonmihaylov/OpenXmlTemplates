@@ -4,11 +4,11 @@ using OpenXMLTemplates.ControlReplacers.DropdownControlReplacers;
 namespace OpenXMLTemplates.Engine
 {
     /// <summary>
-    /// A template engine with all the default content control replacers
+    ///     A template engine with all the default content control replacers
     /// </summary>
     public sealed class DefaultOpenXmlTemplateEngine : OpenXmlTemplateEngine
     {
-        public DefaultOpenXmlTemplateEngine() : base()
+        public DefaultOpenXmlTemplateEngine()
         {
             RegisterReplacer(new RepeatingControlReplacer());
             RegisterReplacer(new ConditionalRemoveControlReplacer());
