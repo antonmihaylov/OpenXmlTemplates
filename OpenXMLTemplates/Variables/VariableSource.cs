@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using OpenXMLTemplates.Variables.Exceptions;
@@ -93,7 +95,7 @@ namespace OpenXMLTemplates.Variables
             IList lastList = null;
             object lastValue = null;
 
-
+            var formatStr = GetStringFormatter(variabeIdentifier);
             foreach (var id in identifierSplittedByDot)
             {
                 if (ParseVariableIdentifier(variabeIdentifier, id,
@@ -101,7 +103,7 @@ namespace OpenXMLTemplates.Variables
                     return variableFromDictionary;
             }
 
-            return lastValue;
+            return string.IsNullOrEmpty(formatStr) ? lastValue : (lastValue == null ? "" : decimal.Parse(lastValue.ToString()).ToString(formatStr));
         }
 
 
@@ -111,69 +113,84 @@ namespace OpenXMLTemplates.Variables
         protected virtual bool ParseVariableIdentifier(string fullIdentifier, string singleIdentifier,
             ref IList lastList, ref IDictionary lastNestedStructure, ref object lastValue,
             out object variableFromDictionary)
-        {
-            object found;
+		{
+			object found;
+			string numFormatStr = GetStringFormatter(singleIdentifier);
 
-            if (singleIdentifier.Contains("[") && singleIdentifier.Contains("]"))
-            {
-                if (lastList == null)
-                    throw new IncorrectIdentifierException(fullIdentifier,
-                        "A list item identifier was provided, but not list was found");
-                try
-                {
-                    var listIndexIdentifier = int.Parse(singleIdentifier.Replace("[", "").Replace("]", ""));
+			if (!string.IsNullOrEmpty(numFormatStr))
+			{
+                var replaceStr = $"({numFormatStr})";
+				singleIdentifier = singleIdentifier.Replace(replaceStr, string.Empty);
+                fullIdentifier = fullIdentifier.Replace(replaceStr, string.Empty);
+			}
 
-                    if (listIndexIdentifier >= lastList.Count)
-                        throw new IncorrectIdentifierException(fullIdentifier,
-                            "A list data structure is found, but the identifier specifies an index that is out of bounds for this collection");
+			if (singleIdentifier.Contains("[") && singleIdentifier.Contains("]"))
+			{
+				if (lastList == null)
+					throw new IncorrectIdentifierException(fullIdentifier,
+						"A list item identifier was provided, but not list was found");
+				try
+				{
+					var listIndexIdentifier = int.Parse(singleIdentifier.Replace("[", "").Replace("]", ""));
 
-                    found = lastList[listIndexIdentifier];
-                }
-                catch
-                {
-                    throw new IncorrectIdentifierException(fullIdentifier,
-                        "A List data structure is found, but the identifier doesn't match the correct pattern for a list identifier. The correct pattern is '...identifier[n]...'");
-                }
-            }
-            else
-            {
-               
-                if (lastNestedStructure == null || !lastNestedStructure.Contains(singleIdentifier))
-                {
-                    if (ThrowIfNotFound) throw new VariableNotFoundException(fullIdentifier);
+					if (listIndexIdentifier >= lastList.Count)
+						throw new IncorrectIdentifierException(fullIdentifier,
+							"A list data structure is found, but the identifier specifies an index that is out of bounds for this collection");
 
-                    variableFromDictionary = default;
-                    return true;
-                }
+					found = lastList[listIndexIdentifier];
+				}
+				catch
+				{
+					throw new IncorrectIdentifierException(fullIdentifier,
+						"A List data structure is found, but the identifier doesn't match the correct pattern for a list identifier. The correct pattern is '...identifier[n]...'");
+				}
+			}
+			else
+			{
 
-                found = lastNestedStructure[singleIdentifier];
-            }
+				if (lastNestedStructure == null || !lastNestedStructure.Contains(singleIdentifier))
+				{
+					if (ThrowIfNotFound) throw new VariableNotFoundException(fullIdentifier);
+
+					variableFromDictionary = default;
+					return true;
+				}
+
+				found = lastNestedStructure[singleIdentifier];
+			}
 
 
-            if (found is IDictionary dictionary)
-                lastNestedStructure = dictionary;
-            else
-            {
-                lastNestedStructure = null;
+			if (found is IDictionary dictionary)
+				lastNestedStructure = dictionary;
+			else
+			{
+				lastNestedStructure = null;
 
-                if (found is IList collection)
-                {
-                    lastList = collection;
-                }
-            }
+				if (found is IList collection)
+				{
+					lastList = collection;
+				}
+			}
 
-            lastValue = found;
-            variableFromDictionary = null;
-            return false;
-        }
+			lastValue = found;
+			variableFromDictionary = null;
+			return false;
+		}
 
-        
-        
+		private static string GetStringFormatter(string fullIdentifier)
+		{
+			var regex = new Regex(@"(\(\w+\))", RegexOptions.IgnoreCase);
+			var numFormatStr = regex.Match(fullIdentifier).Value;
+			return numFormatStr.Trim('(',')');
+		}
 
-        /// <summary>
-        /// Sets the data that will be used for extracting
-        /// </summary>
-        public void LoadDataFromDictionary(IDictionary dictionary)
+
+
+
+		/// <summary>
+		/// Sets the data that will be used for extracting
+		/// </summary>
+		public void LoadDataFromDictionary(IDictionary dictionary)
         {
             this.Data = dictionary;
         }

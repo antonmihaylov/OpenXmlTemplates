@@ -223,7 +223,7 @@ that the variable names will be relative to the list item. All default content c
 * You can use the same extra arguments as in the Conditional remove replacer 
 
  - See example files in the [OpenXmlTemplatesTest/ControlReplacerTests/DropdownControlReplacersTests/ConditionalDropdownControlReplacerTest folder](/OpenXMLTemplatesTest/ControlReplacersTests/DropdownControlReplacersTests/ConditionalDropdownControlReplacerTest)
-
+ 
 ### Images
 
 * Works only with Image content controls!
@@ -231,6 +231,14 @@ that the variable names will be relative to the list item. All default content c
 * Put an image path as a variable in your data, the replacer will get the image and will embed it in the Image content control.
 
  - See example files in the [OpenXmlTemplatesTest/ControlReplacerTests/DropdownControlReplacersTests/PictureControlReplacerTests folder](/OpenXMLTemplatesTest/ControlReplacersTests/DropdownControlReplacersTests/ConditionalDropdownControlReplacerTest)
+
+ ### Numeric Formatting
+
+ Variables that are numeric can be formatted. Follow the variable with () and include the formmater inside the parenthesis.
+ Example: variable_thing1(N2)
+
+Any standard .net numeric formatter may be used.
+[Numeric Formatters](https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-numeric-format-strings)
 
 
 

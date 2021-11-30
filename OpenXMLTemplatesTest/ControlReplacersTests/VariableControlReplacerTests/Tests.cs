@@ -9,16 +9,13 @@ using OpenXMLTemplates.Documents;
 using OpenXMLTemplates.Utils;
 using OpenXMLTemplates.Variables;
 
-namespace OpenXMLTempaltesTest.ControlReplacersTests.VariableControlReplacerTests
-{
-    public class Tests
-    {
+namespace OpenXMLTempaltesTest.ControlReplacersTests.VariableControlReplacerTests {
+    public class Tests {
         private TemplateDocument GetDoc => new TemplateDocument(this.CurrentFolder() + "Doc.docx");
         private string GetData => File.ReadAllText(this.CurrentFolder() + "data.json");
 
         [Test]
-        public void TestVariableControls()
-        {
+        public void TestVariableControls() {
             using var doc = GetDoc;
             var data = GetData;
 
@@ -30,8 +27,7 @@ namespace OpenXMLTempaltesTest.ControlReplacersTests.VariableControlReplacerTest
             replacer.ReplaceAll(doc, src);
             doc.SaveAs(this.CurrentFolder() + "result.docx");
 
-            foreach (var namecc in doc.WordprocessingDocument.FindContentControls(replacer.TagName + "_" + "name"))
-            {
+            foreach (var namecc in doc.WordprocessingDocument.FindContentControls(replacer.TagName + "_" + "name")) {
                 Assert.AreEqual("Antonio Conte", namecc.GetTextElement().Text);
             }
 
@@ -45,9 +41,8 @@ namespace OpenXMLTempaltesTest.ControlReplacersTests.VariableControlReplacerTest
                 doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_" + "address.city.province").GetTextElement().Text);
 
             var cc = doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_" + "paragraph");
-            Assert.AreEqual(2,
-                cc.Descendants<Break>().Count());
-            
+            Assert.AreEqual(0, cc.Descendants<Break>().Count());
+
             //Nested
             Assert.AreEqual("Elm street",
                 doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_" + "street").GetTextElement().Text);
