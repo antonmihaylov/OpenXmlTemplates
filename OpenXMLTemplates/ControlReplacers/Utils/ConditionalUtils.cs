@@ -50,7 +50,14 @@ namespace OpenXMLTemplates.ControlReplacers
                         {
                             object nextValue;
 
-                            nextValue = variableSource.GetVariable(otherParameter) ?? otherParameter;
+                            try
+                            {
+                                nextValue = variableSource.GetVariable(otherParameter) ?? otherParameter;
+                            }
+                            catch (VariableNotFoundException)
+                            {
+                                nextValue = otherParameter;
+                            }
 
                             var nextValueEvaluated = EvaluateVariableValue(nextValue);
 
