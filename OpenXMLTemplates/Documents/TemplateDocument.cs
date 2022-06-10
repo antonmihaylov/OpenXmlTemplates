@@ -125,6 +125,8 @@ namespace OpenXMLTemplates.Documents
                         contentElementChildElement.Remove();
                         sdtElement.InsertBeforeSelf(contentElementChildElement);
                     }
+
+                sdtElement.Remove();
             }
 
             allContentControls.Clear();
