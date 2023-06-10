@@ -61,10 +61,10 @@ namespace OpenXMLTempaltesTest.EngineTest
         }
         
         [Test]
-        public void TestRepeatingControlImageReplace()
+        public void TestRepeatingControlImagesCollectionReplace()
         {
             const string imageReplacerTag = "image";
-            using var doc = new TemplateDocument(this.CurrentFolder() + "Doc.docx");
+            using var doc = new TemplateDocument(this.CurrentFolder() + "Doc2.docx");
 
             var json = File.ReadAllText(this.CurrentFolder() + "data.json");
             var src = new VariableSource(json);
