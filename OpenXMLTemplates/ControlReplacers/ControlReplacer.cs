@@ -5,8 +5,10 @@ using System.Linq;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 using OpenXMLTemplates.Documents;
 using OpenXMLTemplates.Variables;
+using OpenXMLTemplates.Variables.Exceptions;
 using Break = DocumentFormat.OpenXml.Wordprocessing.Break;
 using Paragraph = DocumentFormat.OpenXml.Wordprocessing.Paragraph;
 using Run = DocumentFormat.OpenXml.Wordprocessing.Run;
@@ -123,7 +125,7 @@ namespace OpenXMLTemplates.ControlReplacers
             //Process the control and get the value that we should use
             var newValue = ProcessControl(varIdentifier, variableSource, control, otherParameters);
             if (control.Type == OpenXmlExtensions.ContentControlType.Picture)
-                SetImage(control.SdtElement, newValue, control.TemplateDocument.WordprocessingDocument);
+                SetImage(control.SdtElement, newValue, control.TemplateDocument.WordprocessingDocument, variableSource);
             else
                 SetTextAndRemovePlaceholderFormat(control.SdtElement, newValue);
             OnReplaced(control);
@@ -237,26 +239,59 @@ namespace OpenXMLTemplates.ControlReplacers
         /// <summary>
         ///     Sets the image content of a PictureContentControl
         /// </summary>
-        protected static void SetImage(OpenXmlElement element, string newValue, WordprocessingDocument doc)
+        protected static void SetImage(OpenXmlElement element, string newValue, WordprocessingDocument doc, IVariableSource variableSource)
         {
-            if (newValue == null)
+            if (string.IsNullOrWhiteSpace(newValue))
                 return;
 
-            var imageId = "default value";
-            var blipElement = element.Descendants<Blip>().First();
-            if (blipElement != null) imageId = blipElement.Embed.Value;
-
-            if (blipElement?.Embed != null)
+            var index = 0;
+            try
             {
-                var idpp = doc.MainDocumentPart.Parts.FirstOrDefault(pa => pa.RelationshipId == imageId);
-                if (idpp != null)
-                {
-                    var ip = (ImagePart)idpp.OpenXmlPart;
-                    var bytes = Convert.FromBase64String(newValue);
-                    var contents = new MemoryStream(bytes);
-                    ip.FeedData(contents);
-                }
+                index = (int)variableSource.GetVariable("index");
             }
+            catch (VariableNotFoundException)
+            {
+            }
+
+            var tagName = element.First().GetFirstChild<Tag>().Val.Value;
+
+            var imagesByTagName = doc.MainDocumentPart.Document.Body
+                .Descendants<SdtElement>()
+                .Where(r => r?.SdtProperties != null &&
+                            r.SdtProperties.GetFirstChild<Tag>()?.Val != null &&
+                            r.SdtProperties.GetFirstChild<Tag>().Val == tagName)
+                .ToList();
+            SdtElement controlBlock;
+
+            if (!imagesByTagName.Any())
+                return;
+
+            if (imagesByTagName.Count == 1)
+                controlBlock = imagesByTagName.SingleOrDefault();
+            else
+            {
+                // index in variable source is 1-based
+                if (index > 0)
+                    controlBlock = imagesByTagName[index - 1];
+                else
+                    return;
+            }
+            // Find the Blip element of the content control.
+            var blip = controlBlock?.Descendants<Blip>().FirstOrDefault();
+            if (blip == null)
+                return;
+
+            // Add image and change embeded id.
+            var imagePart = doc.MainDocumentPart
+                .AddImagePart(ImagePartType.Jpeg);
+            var bytes = Convert.FromBase64String(newValue);
+
+            using (var stream = new MemoryStream(bytes))
+            {
+                stream.Position = 0;
+                imagePart.FeedData(stream);
+            }
+            blip.Embed = doc.MainDocumentPart.GetIdOfPart(imagePart);
         }
 
         public void Enqueue(ControlReplacementExecutionData controlReplacementExecutionData)

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
@@ -57,6 +58,34 @@ namespace OpenXMLTempaltesTest.EngineTest
 
             doc.WordprocessingDocument.AssertValid();
             doc.Close();
+        }
+        
+        [Test]
+        public void TestRepeatingControlImageReplace()
+        {
+            const string imageReplacerTag = "image";
+            using var doc = new TemplateDocument(this.CurrentFolder() + "Doc.docx");
+
+            var json = File.ReadAllText(this.CurrentFolder() + "data.json");
+            var src = new VariableSource(json);
+
+            // Substitue path for testing 
+            var itemsList =((List<object>)src.Data["items"]);
+            var image1 = (Dictionary<string, object>)itemsList![0];
+            var image2 = (Dictionary<string, object>)itemsList[1];
+            var image3 = (Dictionary<string, object>)itemsList[2];
+            image1["pic"] = this.CurrentFolder() + "/" + image1["pic"];
+            image2["pic"] = this.CurrentFolder() + "/" + image2["pic"];
+            image3["pic"] = this.CurrentFolder() + "/" + image3["pic"];
+
+            var engine = new DefaultOpenXmlTemplateEngine();
+            engine.ReplaceAll(doc, src);
+
+            doc.SaveAs(this.CurrentFolder() + "result.docx");
+
+            Assert.AreEqual("DocumentFormat.OpenXml.Wordprocessing.SdtRun",
+                doc.WordprocessingDocument.FindContentControl(imageReplacerTag + "_" + "pic").GetType()
+                    .ToString());
         }
     }
 }
