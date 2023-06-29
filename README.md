@@ -142,7 +142,7 @@ Note: to insert a new line, add a new line character (\r\n, \n\r, \n) in the dat
 * Tag name: "variable_\<NAME OF YOUR VARIABLE\>" (the *variable* keyword is case-insensitive)
 * Replaces the text inside the control with the value of the variable with the provided name
 * Supports nested variable names (e.g. address.street)
-* Supports array access (e.g. names[0])
+* Supports array access (e.g. names.[0])
 * Supports nested variables using rich text content controls. For example: a rich text content control with
 tag name address, followed by an inner content control with tag name variable_street is the same as variable.street
 * Note that if you reference a variable from a nested control, that is available in the outer scope, but not in the inner scope - the outer scope variable will be used. 
