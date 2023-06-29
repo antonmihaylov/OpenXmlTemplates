@@ -23,6 +23,8 @@ namespace OpenXMLTempaltesTest.ControlReplacersTests.PictureControlReplacerTests
 
             // Substitue path for testing 
             src.Data["picture1"] = this.CurrentFolder() + "/" + src.Data["picture1"];
+            src.Data["picture2"] = this.CurrentFolder() + "/" + src.Data["picture2"];
+            src.Data["picture3"] = this.CurrentFolder() + "/" + src.Data["picture3"];
 
             var replacer = new PictureControlReplacer();
 
@@ -31,6 +33,12 @@ namespace OpenXMLTempaltesTest.ControlReplacersTests.PictureControlReplacerTests
 
             Assert.AreEqual("DocumentFormat.OpenXml.Wordprocessing.SdtBlock",
                 doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_" + "picture1").GetType()
+                    .ToString());
+            Assert.AreEqual("DocumentFormat.OpenXml.Wordprocessing.SdtBlock",
+                doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_" + "picture2").GetType()
+                    .ToString());
+            Assert.AreEqual("DocumentFormat.OpenXml.Wordprocessing.SdtBlock",
+                doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_" + "picture3").GetType()
                     .ToString());
 
             doc.WordprocessingDocument.AssertValid();

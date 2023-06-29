@@ -9,5 +9,7 @@
     }
   },
   "paragraph": "This is a paragraph. \\n This should be a new line \\n\\r This is another new line",
-  "picture1": "test.jpg"
+  "picture1": "test.jpg",
+  "picture2": "test2.jpg",
+  "picture3": "test3.jpg"
 }
