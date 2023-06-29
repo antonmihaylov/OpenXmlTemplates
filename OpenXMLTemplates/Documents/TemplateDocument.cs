@@ -118,7 +118,7 @@ namespace OpenXMLTemplates.Documents
                 var sdtElement = control.SdtElement;
 
                 var contentElement = sdtElement.Descendants()
-                    .FirstOrDefault(d => d is SdtContentBlock || d is SdtContentRun);
+                    .FirstOrDefault(d => d is SdtContentBlock || d is SdtContentRun || d is StdContentCell);
                 if (contentElement != null)
                     foreach (var contentElementChildElement in contentElement.ChildElements.ToList())
                     {
