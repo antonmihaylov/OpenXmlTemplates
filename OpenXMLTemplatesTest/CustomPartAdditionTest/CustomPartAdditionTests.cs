@@ -2,6 +2,7 @@ using System.Linq;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using OpenXMLTemplates;
 using OpenXMLTemplates.Utils;
 
@@ -18,10 +19,10 @@ namespace OpenXMLTempaltesTest.CustomPartAdditionTest
 
             doc.AddOrReplaceCustomXmlPart(xData);
 
-            Assert.IsNotNull(doc.GetCustomXmlPart("XmlCustomPart"));
+            ClassicAssert.IsNotNull(doc.GetCustomXmlPart("XmlCustomPart"));
             doc.AssertValid();
 
-            doc.Close();
+            //doc.Close();
         }
 
         [Test]
@@ -37,12 +38,12 @@ namespace OpenXMLTempaltesTest.CustomPartAdditionTest
             doc.AddOrReplaceCustomXmlPart(xData2);
 
             var foundPart = doc.GetCustomXmlPart("XmlCustomPart");
-            Assert.IsNotNull(foundPart);
-            Assert.DoesNotThrow(() => doc.GetCustomXmlParts().Single(e => e.GetNamespace() == "XmlCustomPart"));
+            ClassicAssert.IsNotNull(foundPart);
+            ClassicAssert.DoesNotThrow(() => doc.GetCustomXmlParts().Single(e => e.GetNamespace() == "XmlCustomPart"));
 
             doc.AssertValid();
 
-            doc.Close();
+            //doc.Close();
         }
 
         private WordprocessingDocument GetDoc()

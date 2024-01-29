@@ -24,7 +24,7 @@ namespace OpenXMLTempaltesTest.XMLReplacementTest
             doc.AssertValid();
 
 //            doc.SaveAs(TestContext.CurrentContext.TestDirectory + "/XMLReplacementTest/result.docx");
-            doc.Close();
+            //doc.Close();
         }
 
         [Test]
@@ -37,11 +37,11 @@ namespace OpenXMLTempaltesTest.XMLReplacementTest
 
             doc.AddOrReplaceCustomXmlPart(xData);
 
-            doc.Close();
+            //doc.Close();
 
 //            Can't be tested directly, because word needs to reevaluate the content controls first         
-//            Assert.AreEqual("NewItem1Value", doc.FindContentControl("item1").GetTextElement().Text);
-//            Assert.AreEqual("NewItem2Value", doc.FindContentControl("item2").GetTextElement().Text);
+//            ClassicAssert.AreEqual("NewItem1Value", doc.FindContentControl("item1").GetTextElement().Text);
+//            ClassicAssert.AreEqual("NewItem2Value", doc.FindContentControl("item2").GetTextElement().Text);
         }
     }
 }

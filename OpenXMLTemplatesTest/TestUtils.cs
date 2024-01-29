@@ -2,6 +2,7 @@ using System.Linq;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Validation;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 
 namespace OpenXMLTempaltesTest
 {
@@ -39,7 +40,7 @@ namespace OpenXMLTempaltesTest
             }
 
             TestContext.Out.WriteLine("Found {0} OpenXml errors", count);
-            Assert.IsEmpty(errors);
+            ClassicAssert.IsEmpty(errors);
         }
     }
 }

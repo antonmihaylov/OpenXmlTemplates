@@ -1,5 +1,6 @@
 using System.IO;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using OpenXMLTemplates;
 using OpenXMLTemplates.ControlReplacers.DropdownControlReplacers;
 using OpenXMLTemplates.Documents;
@@ -27,11 +28,11 @@ namespace OpenXMLTempaltesTest.ControlReplacersTests.DropdownControlReplacersTes
             var c1 = doc.WordprocessingDocument.FindContentControl(singularReplacer.TagName + "_sellers");
             var c2 = doc.WordprocessingDocument.FindContentControl(singularReplacer.TagName + "_buyers");
 
-            Assert.NotNull(c1);
-            Assert.NotNull(c2);
+            ClassicAssert.NotNull(c1);
+            ClassicAssert.NotNull(c2);
 
-            Assert.AreEqual("sellers are", c1.GetTextElement().Text);
-            Assert.AreEqual("buyer", c2.GetTextElement().Text);
+            ClassicAssert.AreEqual("sellers are", c1.GetTextElement().Text);
+            ClassicAssert.AreEqual("buyer", c2.GetTextElement().Text);
             doc.WordprocessingDocument.AssertValid();
             doc.SaveAs(this.CurrentFolder() + "result.docx");
 
