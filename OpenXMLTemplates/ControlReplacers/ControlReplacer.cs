@@ -245,12 +245,14 @@ namespace OpenXMLTemplates.ControlReplacers
                 return;
 
             var index = 0;
-            try
+            try 
             {
-                index = (int)variableSource.GetVariable("index");
-            }
-            catch (VariableNotFoundException)
-            {
+                var vsIndex = variableSource.GetVariable("index");
+                if (vsIndex != null) 
+                {
+                    index = (int)vsIndex;
+                }
+            } catch (VariableNotFoundException) {
             }
 
             var tagName = element.First().GetFirstChild<Tag>().Val.Value;
