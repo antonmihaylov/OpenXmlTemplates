@@ -1,0 +1,35 @@
+{
+  "items": [
+    "Item 1",
+    "Item 2",
+    "Item 3",
+    "Item 4"
+  ],
+  "complexItems": [
+    {
+      "name": "First Name",
+      "address": "First Address"
+    },
+    {
+      "name": "Second name",
+      "address": "Second address"
+    }
+  ],
+  "nested": [
+    {
+      "name": "List 1",
+      "nestedList": [
+        "item1-1",
+        "item1-2",
+        "item1-3"
+      ]
+    },
+    {
+      "name": "List 2",
+      "nestedList": [
+        "item2-1",
+        "item2-2"
+      ]
+    }
+  ]
+}

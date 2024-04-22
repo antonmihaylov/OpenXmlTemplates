@@ -18,6 +18,12 @@
         <ProjectReference Include="..\OpenXMLTemplates\OpenXMLTemplates.csproj" />
     </ItemGroup>
     <ItemGroup>
+        <None Update="ControlRemovalTest\data.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="ControlRemovalTest\Doc.docx">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
         <None Update="ControlReplacersTests\PictureControlReplacerTests\data.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
