@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using OpenXMLTemplates.Utils;
@@ -113,25 +114,57 @@ namespace OpenXMLTemplates.Documents
 
         public void RemoveControlsAndKeepContent()
         {
-            foreach (var control in allContentControls)
+            var contentControls = WordprocessingDocument.MainDocumentPart.Document.Descendants<SdtElement>().ToList();
+
+            // Process each content control from innermost to outermost
+            foreach (var sdt in contentControls.OrderByDescending(s => s.Ancestors<SdtElement>().Count()))
             {
-                var sdtElement = control.SdtElement;
-
-                var contentElement = sdtElement.Descendants()
-                    .FirstOrDefault(d => d is SdtContentBlock || d is SdtContentRun);
-                if (contentElement != null)
-                    foreach (var contentElementChildElement in contentElement.ChildElements.ToList())
-                    {
-                        contentElementChildElement.Remove();
-                        sdtElement.InsertBeforeSelf(contentElementChildElement);
-                    }
-
-                sdtElement.Remove();
+                if (sdt is SdtBlock sdtBlock)
+                {
+                    HandleSdtContent(sdtBlock, sdtBlock.SdtContentBlock);
+                }
+                else if (sdt is SdtRun sdtRun)
+                {
+                    HandleSdtContent(sdtRun, sdtRun.SdtContentRun);
+                }
+                else if (sdt is SdtRow sdtRow)
+                {
+                    HandleSdtRow(sdtRow);
+                }
             }
 
             allContentControls.Clear();
             innerContentControls.Clear();
             firstOrderContentControls.Clear();
         }
+
+        private static void HandleSdtContent(SdtElement sdt, OpenXmlElement content)
+        {
+            if (content != null)
+            {
+                var parent = sdt.Parent;
+                var elementsToMove = content.ChildElements.ToArray(); // Make a copy to avoid modifying the collection during iteration
+                foreach (var elem in elementsToMove)
+                {
+                    parent.InsertBefore(elem.CloneNode(true), sdt);
+                }
+                // Remove the content control itself
+                sdt.Remove();
+            }
+        }
+        private static void HandleSdtRow(SdtRow sdtRow)
+        {
+            if (sdtRow.SdtContentRow != null)
+            {
+                var tableRow = sdtRow.SdtContentRow.GetFirstChild<TableRow>();
+                if (tableRow != null)
+                {
+                    var parent = sdtRow.Parent; // This should be the Table
+                    parent.InsertBefore(tableRow.CloneNode(true), sdtRow);
+                    sdtRow.Remove();
+                }
+            }
+        }
+
     }
 }
