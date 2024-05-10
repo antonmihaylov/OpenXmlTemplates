@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 using NUnit.Framework;
 using OpenXMLTemplates.Variables;
 using OpenXMLTemplates.Variables.Exceptions;
@@ -47,6 +48,9 @@ namespace OpenXMLTempaltesTest
         [Test]
         public void Format_Numeric_Fields()
         {
+            // Set the current culture to invariant culture for consistent numeric formatting across different environments. 
+            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+
             var data = new Dictionary<string, object>
             {
                 { "prices", new List<string> { "123", "12345.0001" } }
