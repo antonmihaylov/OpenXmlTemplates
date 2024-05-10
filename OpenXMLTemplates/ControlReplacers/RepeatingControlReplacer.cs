@@ -80,8 +80,8 @@ namespace OpenXMLTemplates.ControlReplacers
                             //Support old styled documents
                             var innerRep1 = new InnerRepeatingVariableControlReplacer();
                             var innerRep2 = new InnerRepeatingConditionalRemoveControlReplacer();
-                            innerRep1.ReplaceAll(ex.Controls, ex.VariableSource);
-                            innerRep2.ReplaceAll(ex.Controls, ex.VariableSource);
+                            innerRep1.ReplaceAll(ex.Controls, innerSource);
+                            innerRep2.ReplaceAll(ex.Controls, innerSource);
 
                             break;
                         }
