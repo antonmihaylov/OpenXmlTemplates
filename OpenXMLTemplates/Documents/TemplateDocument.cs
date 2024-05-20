@@ -89,12 +89,14 @@ namespace OpenXMLTemplates.Documents
             if (save)
                 WordprocessingDocument.Save();
 
-            WordprocessingDocument.Close();
+            //WordprocessingDocument.Close();
         }
 
         public OpenXmlPackage SaveAs(string path)
         {
-            return WordprocessingDocument.SaveAs(path);
+            var clonedDoc = WordprocessingDocument.Clone(path);
+            clonedDoc.Save();
+            return clonedDoc;
         }
 
         public void RemoveControl(ContentControl contentControl)

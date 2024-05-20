@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using OpenXMLTemplates.Variables;
 using OpenXMLTemplates.Variables.Exceptions;
 
@@ -22,14 +23,14 @@ namespace OpenXMLTempaltesTest
 
             var source = new VariableSource(data);
 
-            Assert.AreEqual("MyName", source.GetVariable<string>("name"));
-            Assert.AreEqual("MyStreet", source.GetVariable<string>("address.street"));
+            ClassicAssert.AreEqual("MyName", source.GetVariable<string>("name"));
+            ClassicAssert.AreEqual("MyStreet", source.GetVariable<string>("address.street"));
 
-            Assert.AreEqual("12345", source.GetVariable<string>("phones.[1]"));
+            ClassicAssert.AreEqual("12345", source.GetVariable<string>("phones.[1]"));
 
-            Assert.Throws<VariableNotFoundException>(() => source.GetVariable<string>("name.street"));
-            Assert.Throws<VariableNotFoundException>(() => source.GetVariable<string>("address.streeets"));
-            Assert.Throws<IncorrectVariableTypeException>(() => source.GetVariable<int>("name"));
+            ClassicAssert.Throws<VariableNotFoundException>(() => source.GetVariable<string>("name.street"));
+            ClassicAssert.Throws<VariableNotFoundException>(() => source.GetVariable<string>("address.streeets"));
+            ClassicAssert.Throws<IncorrectVariableTypeException>(() => source.GetVariable<int>("name"));
         }
 
         [Test]
@@ -42,7 +43,7 @@ namespace OpenXMLTempaltesTest
 
             var source = new VariableSource(data);
 
-            Assert.AreEqual("", source.GetVariable<string>("prices(N2)"));
+            ClassicAssert.AreEqual("", source.GetVariable<string>("prices(N2)"));
         }
 
         [Test]
@@ -58,7 +59,7 @@ namespace OpenXMLTempaltesTest
 
             var source = new VariableSource(data);
 
-            Assert.AreEqual("12,345.00", source.GetVariable<string>("prices.[1](N2)"));
+            ClassicAssert.AreEqual("12,345.00", source.GetVariable<string>("prices.[1](N2)"));
         }
     }
 }

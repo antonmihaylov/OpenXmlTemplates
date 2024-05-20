@@ -2,6 +2,7 @@ using System.IO;
 using System.Linq;
 using DocumentFormat.OpenXml.Wordprocessing;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using OpenXMLTemplates;
 using OpenXMLTemplates.ControlReplacers;
 using OpenXMLTemplates.Documents;
@@ -29,31 +30,31 @@ namespace OpenXMLTempaltesTest.ControlReplacersTests.VariableControlReplacerTest
             doc.SaveAs(this.CurrentFolder() + "result.docx");
 
             foreach (var namecc in doc.WordprocessingDocument.FindContentControls(replacer.TagName + "_" + "name"))
-                Assert.AreEqual("Antonio Conte", namecc.GetTextElement().Text);
+                ClassicAssert.AreEqual("Antonio Conte", namecc.GetTextElement().Text);
 
-            Assert.AreEqual("Elm street",
+            ClassicAssert.AreEqual("Elm street",
                 doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_" + "address.street")
                     .GetTextElement().Text);
-            Assert.AreEqual("23",
+            ClassicAssert.AreEqual("23",
                 doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_" + "address.number")
                     .GetTextElement().Text);
-            Assert.AreEqual("Novakovo",
+            ClassicAssert.AreEqual("Novakovo",
                 doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_" + "address.city.name")
                     .GetTextElement().Text);
-            Assert.AreEqual("Plovdiv",
+            ClassicAssert.AreEqual("Plovdiv",
                 doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_" + "address.city.province")
                     .GetTextElement().Text);
 
             var cc = doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_" + "paragraph");
-            Assert.AreEqual(0, cc.Descendants<Break>().Count());
+            ClassicAssert.AreEqual(0, cc.Descendants<Break>().Count());
 
             //Nested
-            Assert.AreEqual("Elm street",
+            ClassicAssert.AreEqual("Elm street",
                 doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_" + "street").GetTextElement().Text);
-            Assert.AreEqual("Novakovo",
+            ClassicAssert.AreEqual("Novakovo",
                 doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_" + "name_city").GetTextElement()
                     .Text);
-            Assert.AreEqual("Plovdiv",
+            ClassicAssert.AreEqual("Plovdiv",
                 doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_" + "province").GetTextElement()
                     .Text);
 

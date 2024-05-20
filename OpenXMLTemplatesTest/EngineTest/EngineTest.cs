@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using OpenXMLTemplates;
 using OpenXMLTemplates.Documents;
 using OpenXMLTemplates.Engine;
@@ -35,25 +36,25 @@ namespace OpenXMLTempaltesTest.EngineTest
             }
 
 
-            Assert.AreEqual("Antoniantaz", GetText("variable_name", 0));
-            Assert.AreEqual("1", GetText("variable_index", 0));
-            Assert.AreEqual("2", GetText("variable_index", 1));
-            Assert.AreEqual("1", GetText("variable_index", 2));
-            Assert.AreEqual("2", GetText("variable_index", 3));
+            ClassicAssert.AreEqual("Antoniantaz", GetText("variable_name", 0));
+            ClassicAssert.AreEqual("1", GetText("variable_index", 0));
+            ClassicAssert.AreEqual("2", GetText("variable_index", 1));
+            ClassicAssert.AreEqual("1", GetText("variable_index", 2));
+            ClassicAssert.AreEqual("2", GetText("variable_index", 3));
 
-            Assert.AreEqual(4, wd.FindContentControls("repeating_streets").Count());
-            Assert.AreEqual(2, wd.FindContentControls("variable_city").Count());
-            Assert.AreEqual(9, wd.FindContentControls("variable_name").Count());
+            ClassicAssert.AreEqual(4, wd.FindContentControls("repeating_streets").Count());
+            ClassicAssert.AreEqual(2, wd.FindContentControls("variable_city").Count());
+            ClassicAssert.AreEqual(9, wd.FindContentControls("variable_name").Count());
 
-            Assert.AreEqual("Antoniantaz", GetText("variable_name", 1));
-            Assert.AreEqual("Antoniantaz", GetText("variable_name", 2));
+            ClassicAssert.AreEqual("Antoniantaz", GetText("variable_name", 1));
+            ClassicAssert.AreEqual("Antoniantaz", GetText("variable_name", 2));
 
-            Assert.AreEqual("Novigrad", GetText("variable_name", 3));
-            Assert.AreEqual("First street", GetText("variable_name", 4));
-            Assert.AreEqual("Second Street", GetText("variable_name", 5));
-            Assert.AreEqual("Khan", GetText("variable_name", 6));
+            ClassicAssert.AreEqual("Novigrad", GetText("variable_name", 3));
+            ClassicAssert.AreEqual("First street", GetText("variable_name", 4));
+            ClassicAssert.AreEqual("Second Street", GetText("variable_name", 5));
+            ClassicAssert.AreEqual("Khan", GetText("variable_name", 6));
 
-            Assert.AreEqual("Novigrad", GetText("variable_city.name", 0));
+            ClassicAssert.AreEqual("Novigrad", GetText("variable_city.name", 0));
 
 
             doc.WordprocessingDocument.AssertValid();
@@ -83,7 +84,7 @@ namespace OpenXMLTempaltesTest.EngineTest
 
             doc.SaveAs(this.CurrentFolder() + "result.docx");
 
-            Assert.AreEqual("DocumentFormat.OpenXml.Wordprocessing.SdtRun",
+            ClassicAssert.AreEqual("DocumentFormat.OpenXml.Wordprocessing.SdtRun",
                 doc.WordprocessingDocument.FindContentControl(imageReplacerTag + "_" + "pic").GetType()
                     .ToString());
         }

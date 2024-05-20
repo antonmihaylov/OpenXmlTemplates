@@ -1,5 +1,6 @@
 using System.IO;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using OpenXMLTemplates;
 using OpenXMLTemplates.ControlReplacers;
 using OpenXMLTemplates.Documents;
@@ -31,13 +32,13 @@ namespace OpenXMLTempaltesTest.ControlReplacersTests.PictureControlReplacerTests
             replacer.ReplaceAll(doc, src);
             doc.SaveAs(this.CurrentFolder() + "result.docx");
 
-            Assert.AreEqual("DocumentFormat.OpenXml.Wordprocessing.SdtBlock",
+            ClassicAssert.AreEqual("DocumentFormat.OpenXml.Wordprocessing.SdtBlock",
                 doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_" + "picture1").GetType()
                     .ToString());
-            Assert.AreEqual("DocumentFormat.OpenXml.Wordprocessing.SdtBlock",
+            ClassicAssert.AreEqual("DocumentFormat.OpenXml.Wordprocessing.SdtBlock",
                 doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_" + "picture2").GetType()
                     .ToString());
-            Assert.AreEqual("DocumentFormat.OpenXml.Wordprocessing.SdtBlock",
+            ClassicAssert.AreEqual("DocumentFormat.OpenXml.Wordprocessing.SdtBlock",
                 doc.WordprocessingDocument.FindContentControl(replacer.TagName + "_" + "picture3").GetType()
                     .ToString());
 
